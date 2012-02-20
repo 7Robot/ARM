@@ -8,6 +8,8 @@ include_directories("functions")
 add_subdirectory("can")
 include_directories("can/libcan")
 
+add_subdirectory("gateway")
+
 add_subdirectory("ia")
 
-add_subdirectory("tcphub")
+add_subdirectory("hub")

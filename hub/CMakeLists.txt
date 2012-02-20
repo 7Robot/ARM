@@ -4,7 +4,7 @@ project(TcpHub C)
 
 option(ARCHLINUX "Install init script for ArchLinux" OFF)
 
-option(DYNAMIC "Run control serveur on port 7751" ON)
+option(DYNAMIC "Run control serveur on port 7751" OFF)
 
 file(GLOB SRC_FILES src/*.c)
 

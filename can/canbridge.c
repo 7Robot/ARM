@@ -11,11 +11,11 @@
 
 /* Default parameters */
 #define DEFAULT_HOST1 "localhost"
-#define DEFAULT_PORT1 "3521"
+#define DEFAULT_PORT1 "7771"
 #define DEFAULT_FORMAT1 "bin"
 
 #define DEFAULT_HOST2 "localhost"
-#define DEFAULT_PORT2 "3522"
+#define DEFAULT_PORT2 "7772"
 #define DEFAULT_FORMAT2 "txt"
 
 #define CONVERTER "canconvert"
