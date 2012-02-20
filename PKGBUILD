@@ -1,16 +1,16 @@
 # Maintainer: Élie Bouttier <cube.elie@gmail.com>
-pkgname=7robot-repeater-git
+pkgname=7robot-eurobot-git
 pkgver=20120212
 pkgrel=1
-pkgdesc="7Robot virtual STCP server"
+pkgdesc="7Robot eurobot related sources"
 arch=('i686' 'x86_64')
-url="http://github.com/bouttier/Repeater/"
+url="http://github.com/bouttier/Eurobot/"
 license=('GPL')
 depends=()
 makedepends=('git')
 
-_gitroot=http://github.com/bouttier/Repeater.git
-_gitname=Repeater
+_gitroot=http://github.com/bouttier/Eurobot.git
+_gitname=Eurobot
 
 build() {
   cd "$srcdir"

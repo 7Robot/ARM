@@ -10,4 +10,4 @@ include_directories("can/libcan")
 
 add_subdirectory("ia")
 
-add_subdirectory("tcbhub")
+add_subdirectory("tcphub")
