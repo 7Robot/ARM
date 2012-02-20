@@ -8,8 +8,8 @@
 
 #include "Robot.h"
 
-#define DEFAULT_HOST "petit"
-#define DEFAULT_PORT "3521"
+#define DEFAULT_HOST "r2d2"
+#define DEFAULT_PORT "7771"
 
 void show_help(char * cmd);
 

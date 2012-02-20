@@ -7,6 +7,7 @@
 #include "Robot.h"
 #include "CallbackHandler.h"
 #include "Demo.h"
+#include "Lingo.h"
 
 using namespace std;
 using namespace libcan;
@@ -24,9 +25,12 @@ void Robot::start()
 {
 	cout << "Robot::start()" << endl;
 	
-	Demo demo(ch);
+	/*Demo demo(ch);
 	cbh.push(demo.getCallbackSet());
-	demo.run();
+	demo.run();*/
+	Lingo lingo(ch);
+	cbh.push(lingo.getCallbackSet());
+	lingo.run();
 	cbh.pop();
 
 	cout << "Robot::start() ended" << endl;

@@ -4,4 +4,4 @@ project(PetitRobot CXX)
 
 include_directories(".." "../callback")
 
-add_library(mission STATIC Mission Demo)
+add_library(mission STATIC Mission Demo Lingo)

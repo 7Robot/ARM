@@ -54,7 +54,7 @@ void Demo::pbStateChanged(int id, bool status)
 		printf("state=%d\n", state);
 		ch->send(1029, 2, 0, 0);
 		usleep(20000);
-        ch->send(1025, 2, 145, 0);
+	        ch->send(1025, 2, 145, 0);
 	}
 }
 
@@ -67,7 +67,7 @@ void Demo::asservEnd()
 		printf("state=%d\n", state);
 		ch->send(1029, 2, 0, 0);
 		usleep(20000);
-        ch->send(1025, 2, 145, 0);
+        	ch->send(1025, 2, 145, 0);
 	} else if (state == 2) {
 		state = 1;
 		printf("state=%d\n", state);
@@ -93,39 +93,5 @@ void Demo::sonarValue(int id, int edge, int value)
 		ch->send(1029, 2, 0, 0);
 		usleep(20000);
 		ch->send(1025, 2, 100, 0);
-	}
-}
-
-
-
-
-
-void Demo::consigne(int speed, int time)
-{
-	int i;
-	int dt = 50;
-	int j = time / dt;
-	if (spending * speed < 0) {
-		for (i = 0 ; i < j ; i++) {
-			int c = speedconvert((i*speed)/j);
-			ch->send(1029, 2, c, c);
-			usleep(dt * 1000);
-		}
-	} else {
-		for (i = 0 ; i < j ; i++) {
-			int c = speedconvert(spending+(i*(speed-spending))/j);
-			ch->send(1029, 2, c, c);
-			usleep(dt * 1000);
-		}
-	}
-	spending = speed;
-}
-
-int Demo::speedconvert(int speed)
-{
-	if (speed < 0) {
-		return 255 + speed;
-	} else {
-		return speed;
 	}
 }
