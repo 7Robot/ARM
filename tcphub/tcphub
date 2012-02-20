@@ -1,10 +1,10 @@
 #!/bin/bash
 
-PRG_NAME="Eurobot repeater"
-LOGFILE=/var/log/repeater.log
-PIDFILE=/var/run/repeater.pid
+PRG_NAME="7Robot tcphub"
+LOGFILE=/var/log/tcphub.log
+PIDFILE=/var/run/tcphub.pid
 PID=$(cat $PIDFILE 2> /dev/null)
-CMD=repeater
+CMD=tcphub
 
 USECOLOR=yes
 . /etc/rc.d/functions
