@@ -13,3 +13,5 @@ add_subdirectory("gateway")
 add_subdirectory("ia")
 
 add_subdirectory("hub")
+
+add_subdirectory("pictures/fb2rgb")
