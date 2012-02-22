@@ -12,3 +12,4 @@ set_target_properties(can PROPERTIES COMPILE_FLAGS "-std=gnu99 -fPIC")
 
 install(TARGETS can LIBRARY DESTINATION lib)
 install(FILES libcan.h DESTINATION include)
+install(FILES can-messages.txt DESTINATION /etc/canconvert/)

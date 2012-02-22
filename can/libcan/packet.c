@@ -33,8 +33,8 @@
  #include "libcan.h"
  #include "libcan-private.h"
 
- #define DEFAULT_ID_FORMAT_FILE "format.txt"
- #define DEFAULT_ID_FORMAT_ENV "CAN_ID_FORMAT"
+ #define DEFAULT_ID_FORMAT_FILE "/etc/canconvert/can-messages.txt"
+ #define DEFAULT_ID_FORMAT_ENV "CAN_MESSAGES_FILE"
 
 static int bin_write(int fd, struct can_t const * packet);
 static int dec_write(int fd, struct can_t const * packet);
