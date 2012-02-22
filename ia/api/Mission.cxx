@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 #include "Mission.h"
-#include "Can.h"
 
-void Mission::setup(Can * can)
+void Mission::setup(MissionHandler * mh, Can * can)
 {
+	this->mh = mh;
 	this->can = can;
 }

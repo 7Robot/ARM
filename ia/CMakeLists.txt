@@ -7,5 +7,5 @@ add_subdirectory("api")
 include_directories("api")
 
 add_library(demo SHARED Demo.cxx)
-
-set_target_properties(demo PROPERTIES COMPILE_FLAGS -std=gnu++0x)
+add_library(init SHARED Init.cxx)
+add_library(template SHARED Template.cxx)

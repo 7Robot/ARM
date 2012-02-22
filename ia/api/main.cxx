@@ -121,10 +121,14 @@ int main(int argc, char ** argv)
 	printf("Open bus can …\n");
 	if ((canbus = getsockfd(host, port)) < 0) {
 		fprintf(stderr, "error: getsockfd(%s, %s) failed", host, port);
+		return 1;
 	}
 	can.setup(canbus, MissionHandler::recv);
 
-	mh.load(mission);
+	if (mh.load(mission)) {
+		fprintf(stderr, "error: failed to load mission « %s »\n", mission);
+		return 1;
+	}
 
 	return 0;
 }

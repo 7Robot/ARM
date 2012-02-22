@@ -1,6 +1,9 @@
 #ifndef _MISSION_HANDLER_H_
 #define _MISSION_HANDLER_H_
 
+#include <vector>
+
+#include "Mission.h"
 #include "Can.h"
 #include "libcan.h"
 
@@ -12,6 +15,7 @@ class MissionHandler
 		static void recv(struct libcan::can_t packet);
 
 	private:
+		static std::vector<Mission*> missions;
 		char * basedir;
 		Can * can;
 };

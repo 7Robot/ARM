@@ -9,71 +9,69 @@ class Callback
 
 
 template<class T>
-class cb_asserv: public Callback
+class CB_Asserv: public Callback
 {
     public:
-        cb_asserv(T* object, void (T::*methode)()):
+        CB_Asserv(T* object, void (T::*methode)(int)):
             m_object(object), m_methode(methode) {}
         
-		void call(void * args)
+		void call(void * arg)
         {
-            (m_object->*m_methode)();
+            (m_object->*m_methode)(*((int*)arg));
         }
 
 
     private:
         T* m_object;
-        void (T::*m_methode)();
+        void (T::*m_methode)(int);
 };
-/*
+
 typedef struct {
-    int pbID;
-    int state;
+    int id;
+    bool state;
 } args_microswitch;
 
 template<class T>
-class cb_microswitch:
+class CB_Microswitch: public Callback
 {
     public:
-        cb_microswitch(T* object, void (T::*methode)(int, bool)):
+        CB_Microswitch(T* object, void (T::*methode)(int, bool)):
             m_object(object), m_methode(methode) {}
-        void call(void * args)
+
+        void call(void * arg)
         {
-            pushButtonAnswer * answer = (pushButtonAnswer*)args;
-            (m_object->*m_methode)(answer->pbID, answer->state);
+            args_microswitch * args = (args_microswitch*)arg;
+            (m_object->*m_methode)(args->id, args->state);
         }
 
 
     private:
         T* m_object;
-        void (T::*m_methode)(int pbID, bool state);
+        void (T::*m_methode)(int, bool);
 };
 
-typedef struct sonarAnswer {
+typedef struct {
     int id;
-	int edge;
+	bool edge;
     int value;
-} sonarAnswer;
+} args_sonar;
 
 template<class T>
-class sonarCallback: public Callback
+class CB_Sonar: public Callback
 {
     public:
-        sonarCallback(T* object, void (T::*methode)(int, int, int)):
-            m_object(object), m_methode(methode)
-        {
-            std::cout << "sonarCallback::CallBackMethode()" << std::endl;
-        }
-        void call(void * args)
-        {
-            sonarAnswer * answer = (sonarAnswer*)args;
-            (m_object->*m_methode)(answer->id, answer->edge, answer->value);
+        CB_Sonar(T* object, void (T::*methode)(int, bool, int)):
+            m_object(object), m_methode(methode) {}
+
+        void call(void * arg) {
+            args_sonar * args = (args_sonar*)arg;
+			(m_object->*m_methode)(args->id, args->edge, args->value);
         }
 
 
     private:
         T* m_object;
-        void (T::*m_methode)(int id, int edge, int value);
-};*/
+        void (T::*m_methode)(int, bool, int);
+};
 
 #endif
