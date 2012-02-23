@@ -56,17 +56,20 @@ bool Can::rotate(int angle)
 {
 	printf("Can::rotate(%d)\n", angle);
 	
-	int tics = angle * 4212 / 180;
+	int tics = abs(angle) * 4212 / 180;
 	int low = tics % 256;
 	int high = (tics - low) / 256;
-	send(1026, 2, high, low);
+	if (angle < 0)
+		send(1026, 2, -high, low);
+	else
+		send(1026, 2, high, low);
 
 	return false;
 }
 
-bool Can::forward(int distance)
+bool Can::fwd(int distance)
 {
-	printf("Can::foward(%d)\n", distance);
+	printf("Can::fwd(%d)\n", distance);
 
 	int tics = distance * 13.4;
 	int low = tics % 256;
@@ -76,11 +79,20 @@ bool Can::forward(int distance)
 	return false;
 }
 
-bool Can::forward(int left, int right)
+bool Can::fwd(int left, int right)
 {
-	printf("Can::foward(%d, %d)\n", left, right);
+	printf("Can::fwd(%d, %d)\n", left, right);
 
 	send(1032, 2, left, right);
+
+	return false;
+}
+
+bool Can::speed(int left, int right)
+{
+	printf("Can::speed(%d, %d)\n", left, right);
+
+	send(1029, 2, left, right);
 
 	return false;
 }

@@ -6,6 +6,7 @@
 
 #include "functions.h"
 #include "MissionHandler.h"
+#include "Callback.h"
 #include "Can.h"
 
 #define DEFAULT_HOST "r2d2"
@@ -123,12 +124,16 @@ int main(int argc, char ** argv)
 		fprintf(stderr, "error: getsockfd(%s, %s) failed", host, port);
 		return 1;
 	}
-	can.setup(canbus, MissionHandler::recv);
+	can.setup(canbus, Callback::recv);
 
+	/////////////////////////////////////////////////////////////////////
+	
 	if (mh.load(mission)) {
 		fprintf(stderr, "error: failed to load mission « %s »\n", mission);
 		return 1;
 	}
+
+	/////////////////////////////////////////////////////////////////////
 
 	return 0;
 }

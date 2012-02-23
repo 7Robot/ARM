@@ -12,10 +12,9 @@ class MissionHandler
 	public:
 		MissionHandler(char * basedir, Can * can);
 		bool load(char * mission);
-		static void recv(struct libcan::can_t packet);
+		static std::vector<Mission*> missions;
 
 	private:
-		static std::vector<Mission*> missions;
 		char * basedir;
 		Can * can;
 };

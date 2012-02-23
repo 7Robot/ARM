@@ -2,29 +2,19 @@
 #include <unistd.h>
 
 #include "Mission.h"
-#include "Callback.h"
 
 class Demo: public Mission
 {
-	private:
-	
-	int state;
-
-	public:
-
 	void init() {
 		printf("Demo::init()\n");
-
-		this->cb_asserv = new CB_Asserv<Demo>(this, &Demo::asserv);
-		this->cb_microswitch = new CB_Microswitch<Demo>(this, &Demo::microswitch);
 	}
 
 	void run() {
 		printf("Demo::run\n");
-		can->forward(0);
+		can->fwd(0);
 		usleep(100000);
 		state = 1;
-		can->forward(0);
+		can->fwd(0);
 		pause();
 	}
 
@@ -40,12 +30,12 @@ class Demo: public Mission
 		switch (state) {
 			case 1:
 				usleep(delai);
-				can->forward(longueur);
+				can->fwd(longueur);
 				state = 2;
 				break;
 			case 2:
 				usleep(delai);
-				can->forward(-longueur);
+				can->fwd(-longueur);
 				state = 3;
 				break;
 			case 3:
@@ -55,12 +45,12 @@ class Demo: public Mission
 				break;
 			case 4:
 				usleep(delai);
-				can->forward(longueur);
+				can->fwd(longueur);
 				state = 5;
 				break;
 			case 5:
 				usleep(delai);
-				can->forward(-longueur);
+				can->fwd(-longueur);
 				state = 6;
 				break;
 			case 6:

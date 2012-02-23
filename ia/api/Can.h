@@ -10,8 +10,9 @@ class Can
 		bool send(int id, int length, ...);
 		bool send(struct libcan::can_t * packet);
 		bool rotate(int angle); /* degré */
-		bool forward(int distance); /* mm */
-		bool forward(int left_speed, int right_speed); /* -80 à 80 */
+		bool fwd(int distance); /* mm */
+		bool fwd(int left_speed, int right_speed); /* -80 à 80 */
+		bool speed(int left_speed, int right_speed); /* -80 à 80 */
 
 	private:
 		int canbus;
