@@ -11,23 +11,24 @@ class Template: public Mission
 {
 	void init() {
 		printf("Template::init()\n");
-		mh->load("init");
+		mh->load("init"); // Chargement mission « init »
 	}
 	
 	void run() {
 		printf("Template::run\n");
-		can->fwd(0); /* initialisation dû a un bug de Maxime, tapez-le */
-		usleep(50 * 1000); /* 50 ms */
-		can->fwd(500); /* distance en mm */
-		//usleep(1000 * 1000);
-		//can->rotate(50); /* angle en degré */
-		//usleep(1000 * 1000); /* 1 sec */
-		//can->fwd(10, 10); /* vitesse roue gauche, roue droite */
-		pause();
+		//usleep(50 * 1000); /* attente 50 ms */
+		//can->fwd(500); /* avance de 500 mm */
+		//can->rotate(50); /* tourne de 50° */
+		//can->fwd(10, 10); /* vitesse roue gauche / roue droite (de -80 à 80) */
+		wait(); /* attente signal() */
+		// fin mission
 	}
 	
 	void microswitch(int id, bool state) {
 		printf("Template::microswitch: id = %d, state = %d\n", id, state);
+		if (id = 1 && !state) { // bouton avant relaché
+			signal(); // on stop le wait()
+		}
 	}
 	
 	void asserv(int erreur) {

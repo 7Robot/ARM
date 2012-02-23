@@ -11,7 +11,7 @@
 
 #define DEFAULT_HOST "r2d2"
 #define DEFAULT_PORT "7771"
-#define DEFAULT_MISSION "demo"
+#define DEFAULT_MISSION "petit"
 #define DEFAULT_MISSION_DIRECTORY "./"
 
 void show_help(char * cmd);
@@ -33,6 +33,7 @@ int main(int argc, char ** argv)
     static char * mission_directory = (char*)DEFAULT_MISSION_DIRECTORY;
     char * opt_mission_directory = NULL;
 
+	/* ENV */
     env = getenv("IA_HOST");
     if ((env != NULL) && (strlen(env) != 0)) {
         opt_host = (char*)malloc(strlen(env) + 1);
@@ -52,6 +53,26 @@ int main(int argc, char ** argv)
         }
         strcpy(opt_port, env);
         port = opt_port;
+    }
+    env = getenv("IA_DIR");
+    if ((env != NULL) && (strlen(env) != 0)) {
+        opt_mission_directory = (char*)malloc(strlen(env) + 1);
+        if (opt_mission_directory == NULL) {
+            perror("malloc");
+            exit(1);
+        }
+        strcpy(opt_mission_directory, env);
+        mission_directory = opt_mission_directory;
+    }
+    env = getenv("IA_MISSION");
+    if ((env != NULL) && (strlen(env) != 0)) {
+        opt_mission = (char*)malloc(strlen(env) + 1);
+        if (opt_mission == NULL) {
+            perror("malloc");
+            exit(1);
+        }
+        strcpy(opt_mission, env);
+        mission = opt_mission;
     }
 
     /* OPT */
