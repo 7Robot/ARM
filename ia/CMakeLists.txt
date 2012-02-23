@@ -6,6 +6,7 @@ add_subdirectory("api")
 
 include_directories("api")
 
-add_library(demo SHARED Demo.cxx)
-add_library(init SHARED Init.cxx)
 add_library(template SHARED Template.cxx)
+add_library(init SHARED Init.cxx)
+add_library(petit SHARED Petit.cxx)
+add_library(demo SHARED Demo.cxx)

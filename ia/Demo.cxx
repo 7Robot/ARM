@@ -7,6 +7,7 @@ class Demo: public Mission
 {
 	void init() {
 		printf("Demo::init()\n");
+		mh->load("init");
 	}
 
 	void run() {

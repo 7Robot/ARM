@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "Can.h"
 
@@ -52,17 +53,29 @@ bool Can::send(struct libcan::can_t * packet)
 	return false;
 }
 
+bool Can::stop()
+{
+	printf("Can::stop()\n");
+
+	send(1051, 0);
+
+	return false;
+}
+
 bool Can::rotate(int angle)
 {
 	printf("Can::rotate(%d)\n", angle);
 	
-	int tics = abs(angle) * 4212 / 180;
+	int16_t a = round(angle*23.4);
+	send(1026, 2, ((char*)&a)[0], ((char*)&a)[1]);
+			
+	/*int tics = abs(angle) * 4212 / 180;
 	int low = tics % 256;
 	int high = (tics - low) / 256;
 	if (angle < 0)
 		send(1026, 2, -high, low);
 	else
-		send(1026, 2, high, low);
+		send(1026, 2, high, low);*/
 
 	return false;
 }
@@ -71,10 +84,13 @@ bool Can::fwd(int distance)
 {
 	printf("Can::fwd(%d)\n", distance);
 
-	int tics = distance * 13.4;
+	int16_t d = round(distance*13.4);
+	send(1025, 2, ((char*)&d)[0], ((char*)&d)[1]);
+
+	/*int tics = distance * 13.4;
 	int low = tics % 256;
 	int high = (tics - low) / 256;
-	send(1025, 2, high, low);
+	send(1025, 2, high, low);*/
 
 	return false;
 }
@@ -93,6 +109,15 @@ bool Can::speed(int left, int right)
 	printf("Can::speed(%d, %d)\n", left, right);
 
 	send(1029, 2, left, right);
+
+	return false;
+}
+
+bool Can::odoReset()
+{
+	printf("Can::odoReset()\n");
+
+	send(517, 6, 0, 0, 0, 0, 0, 0);
 
 	return false;
 }

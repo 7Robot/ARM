@@ -4,7 +4,6 @@
  */
 
 #include <stdio.h>
-#include <unistd.h>
 
 #include "Mission.h"
 
@@ -12,6 +11,7 @@ class Template: public Mission
 {
 	void init() {
 		printf("Template::init()\n");
+		mh->load("init");
 	}
 	
 	void run() {

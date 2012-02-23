@@ -13,7 +13,7 @@ class Init: public Mission
 		printf("Init::run\n");
 		state = 1;
 		can->fwd(-20, -20);
-		pause();
+		wait();
 	}
 
 	void microswitch(int id, bool status) {
@@ -22,20 +22,20 @@ class Init: public Mission
 		switch (state) {
 			case 1:
 				if (id == 0) {
-					usleep(500000);
-					can->speed(0, 0);
+					usleep(700000);
+					can->stop();
 					state = 2;
-					usleep(100000);
-					can->fwd(350);
+					usleep(300000);
+					can->fwd(200);
 				}
 				break;
 			case 4:
 				if (id == 1) {
-					usleep(500000);
-					can->speed(0, 0);
+					usleep(700000);
+					can->stop();
 					state = 5;
-					usleep(100000);
-					can->fwd(-200);
+					usleep(300000);
+					can->fwd(-150);
 				}
 				break;
 		}
@@ -56,6 +56,10 @@ class Init: public Mission
 			case 5:
 				state = 6;
 				can->rotate(90);
+				break;
+			case 6:
+				can->odoReset();
+				signal();
 				break;
 		}
 	}

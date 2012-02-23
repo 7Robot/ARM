@@ -12,7 +12,7 @@
 #define DEFAULT_HOST "r2d2"
 #define DEFAULT_PORT "7771"
 #define DEFAULT_MISSION "demo"
-#define DEFAULT_MISSION_DIRECTORY "../"
+#define DEFAULT_MISSION_DIRECTORY "./"
 
 void show_help(char * cmd);
 

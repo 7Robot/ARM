@@ -31,7 +31,7 @@ void Callback::recv(struct libcan::can_t packet) {
         int x = ((int16_t*)packet.b)[0];
         int y = ((int16_t*)packet.b)[1];
         int theta = ((uint16_t*)packet.b)[2];
-        printf("\tOdo (x= %.2f cm, y = %.2f cm, theta = %.2f°)\n", x / 10.0, y / 10.0, theta / 100.0);
+        printf("\tOdo (x= %.1f cm, y = %.1f cm, theta = %.2f°)\n", x / 10.0, y / 10.0, theta / 100.0);
 		odometry(x, y, theta);
     } else {
         // message inconnu
@@ -39,9 +39,8 @@ void Callback::recv(struct libcan::can_t packet) {
 	
 }
 	
-void Callback::microswitch(int id, bool status) {
-	printf("Mission::microswitch: id = %d, status = %d\n", id, status);
-
+void Callback::microswitch(int id, bool status)
+{
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		((*it)->microswitch)(id, status);
@@ -50,8 +49,6 @@ void Callback::microswitch(int id, bool status) {
 
 void Callback::asserv(int error)
 {
-	printf("Mission::asserv: error = %d\n", error);
-
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		((*it)->asserv)(error);
@@ -60,8 +57,6 @@ void Callback::asserv(int error)
 
 void Callback::sonar(int id, bool edge, bool nearby, int distance)
 {
-	printf("Mission::sonar: id = %d, edge = %d, nearby = %d, distance = %d\n", id, edge, nearby, distance);
-
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		((*it)->sonar)(id, edge, nearby, distance);
@@ -70,8 +65,6 @@ void Callback::sonar(int id, bool edge, bool nearby, int distance)
 
 void Callback::odometry(int x, int y, int theta)
 {
-	printf("Mission::odometry: x = %d, y = %d, theta = %d\n", x, y, theta);
-
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		((*it)->odometry)(x, y, theta);

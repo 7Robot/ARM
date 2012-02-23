@@ -12,23 +12,32 @@ MissionHandler::MissionHandler(char * basedir, Can * can)
 	this->can = can;
 }
 
-bool MissionHandler::load(char * name)
+bool MissionHandler::load(const char * name)
 {
 	printf("MissionHandler::load(%s)\n", name);
 
 	void *hndl;
 	char path[256];
 
-	hndl = dlopen(name, RTLD_LAZY);
+	// try "libname.so"
+	strcat(path, "lib");
+	strcat(path, name);
+	strcat(path, ".so");
+	hndl = dlopen(path, RTLD_LAZY);
 	if(hndl == NULL) {
-		strcpy(path, basedir);
-		strcat(path, "lib");
-		strcat(path, name);
-		strcat(path, ".so");
-		hndl = dlopen(path, RTLD_LAZY);
+		// try "name"
+		hndl = dlopen(name, RTLD_LAZY);
 		if (hndl == NULL) {
-			fprintf(stderr, "ldopen failed(%s)\n", dlerror());
-			return true;
+			// try "dir/libname.so"
+			strcpy(path, basedir);
+			strcat(path, "lib");
+			strcat(path, name);
+			strcat(path, ".so");
+			hndl = dlopen(path, RTLD_LAZY);
+			if (hndl == NULL) {
+				fprintf(stderr, "ldopen failed(%s)\n", dlerror());
+				return true;
+			}
 		}
 	}
 
