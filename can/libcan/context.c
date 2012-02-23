@@ -37,6 +37,7 @@ int can_init(struct can_ctx ** ctx)
 		return -1;
 	}
 	c->refcount = 1;
+	c->status = 0;
 	c->fd = 0;
 	c->inc = CALLBACK_SIZE_INC;
 	c->asize = 0;
