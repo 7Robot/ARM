@@ -44,7 +44,7 @@ int create_socket_stream(const char* hostname, const char* servname)
 
 	s = getaddrinfo(hostname, servname, &hints, &result);
 	if (s != 0) {
-		lprintf(LOG_NOTICE, "Error: %s", gai_strerror(s));
+		lprintf(LOG_NOTICE, "Error: %s\n", gai_strerror(s));
 		return -1;
 	}
 

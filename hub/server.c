@@ -69,7 +69,7 @@ int create_socket_stream(const char* hostname, const char* servname)
 	freeaddrinfo(result);	/* No longer needed */
 
 	if (rp == NULL) {	/* No address succeeded */
-		fprintf(stderr, "Error: Could not bind");
+		fprintf(stderr, "Error: Could not bind\n");
 		return -1;
 	}
 

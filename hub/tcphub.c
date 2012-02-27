@@ -49,6 +49,7 @@ int main(int argc, char ** argv)
 	}
 
 	printf("tcphub running on port %s\n", service);
+	fflush(stdout);
 	if (hub(service) < 0) {
 		return 1;
 	}
@@ -109,6 +110,7 @@ int hub(const char * service)
 			} else {
 				sockclient[sockclientc++] = sock;
 				fprintf(stdout, "%i connections [+1]\n", sockclientc);
+				fflush(stdout);
 			}
 		}
 
@@ -119,6 +121,7 @@ int hub(const char * service)
 					close(sockclient[i]);
                     sockclient[i] = sockclient[--sockclientc];
 					fprintf(stdout, "%i connections [-1]\n", sockclientc);
+					fflush(stdout);
 					if (r < 0) {
 						perror("read");
 						return -1;
@@ -182,6 +185,7 @@ int dispatches(int sockclientc, int * sockclient, int socksource, int r, char * 
 						pending[i] = pending[sockclientc];
 					}
 					fprintf(stdout, "%i connections [-1]\n", sockclientc);
+					fflush(stdout);
 				} else {
 					memmove(buffers[i], &(buffers[i][w]), pending[i] - w);
 					pending[i] -= w;
