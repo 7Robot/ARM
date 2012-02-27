@@ -26,12 +26,16 @@ class FenPrincipale : public QWidget
         FenPrincipale();
         void modifPosition(QGraphicsItem *robot,int x , int y , int theta );
         void canRecv(struct libcan::can_t packet);
+        void testPosObs(int d,int angle);
+        
     private slots:
       void timerOut();
         
     private: 
 		QGraphicsItem *map;
 		QGraphicsPixmapItem *robot;
+		QGraphicsItem *obstacle;
+		
 		QTimer * timer ;
 		QGraphicsItem *origine ;
 		
