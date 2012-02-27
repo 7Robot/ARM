@@ -122,9 +122,9 @@ int hub(const char * service)
                     sockclient[i] = sockclient[--sockclientc];
 					fprintf(stdout, "%i connections [-1]\n", sockclientc);
 					fflush(stdout);
-					if (r < 0) {
+					if (r < 0 && errno != ECONNRESET) {
 						perror("read");
-						return -1;
+						//return -1;
 					}
 				} else {
 					if (dispatches(sockclientc, sockclient, i, r, buffer) < 0) {
