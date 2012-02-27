@@ -37,6 +37,7 @@ char *button_names[KEY_MAX - BTN_MISC + 1] = {
 
 void event(int x, int y);
 void * update(void * arg);
+void demitour(int fd, int right);
 
 #define NAME_LENGTH 128
 
@@ -124,10 +125,35 @@ int main (int argc, char **argv)
 			break;
 		}
 
-		event(axis[0], -axis[1]);
+		if (button[2]) {
+			demitour(sock, 0);
+		} else if (button[3]) {
+			demitour(sock, 1);
+		} else if (button[1]) {
+			struct can_t packet;
+			packet.id = 1025;
+			packet.length = 2;
+		} else {
+			event(axis[0], -axis[1]);
+		}
 	}
 
 	return -1;
+}
+
+void demitour(int fd, int right)
+{
+	struct can_t packet;
+	packet.id = 1026;
+	packet.length = 2;
+	if (right) {
+		packet.b[0] = 116;
+		packet.b[1] = 16;
+	} else {
+		packet.b[0] = 140;
+		packet.b[1] = 239;
+	}
+	can_pwrite(fd, bin, &packet);
 }
 
 void event(int _x, int _y)
@@ -188,7 +214,7 @@ void * update(void * arg)
 			}
 			packet.b[0] = l;
 			packet.b[1] = r;
-			can_pwrite(*((int*)arg), dec, &packet);
+			can_pwrite(*((int*)arg), bin, &packet);
 			usleep(DELAY * 1000);
 		} else {
 		    pthread_mutex_lock(&cnd_mtx);
