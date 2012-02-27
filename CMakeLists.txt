@@ -14,4 +14,6 @@ add_subdirectory("ia")
 
 add_subdirectory("hub")
 
+add_subdirectory("js")
+
 add_subdirectory("pictures/fb2rgb")
