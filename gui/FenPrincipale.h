@@ -12,8 +12,8 @@
 #define mapLargeur 648
 #define mapHauteur 406
 
-#define mapLargeur_int 606
-#define mapHauteur_int 406
+#define mapLargeur_int 620
+#define mapHauteur_int 420
 
 #define x0_def 70
 #define	y0_def 70
