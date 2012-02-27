@@ -16,21 +16,30 @@ FenPrincipale::FenPrincipale()
 		vue->setFixedSize(mapLargeur+100,mapHauteur+100); //taille de la vue
     
 		//Mise en place de la map 
-		map=scene->addPixmap(QPixmap("map.png"));
+		QPixmap map_im ; 
+		map_im.load("map.png");
+		map=scene->addPixmap(map_im);
 		map->setPos(0,0);
 		map->setZValue(-1);
+		
+		//Resctangle test
+		QRect rectangle1(15,15,620,420);
+		scene->addRect(rectangle1);
+		//rectangle1.moveCenter(QPoint(0,0)); // met le centre au centre
+		
 		
 		//Création de l'origine
 		
 		QRect rectangle(0,0,10,10);
 		rectangle.moveCenter(QPoint(0,0)); // met le centre au centre
 		origine=scene->addRect(rectangle);
-		origine->setPos(x0_def,y0_def);
+		origine->setPos(map_im.width()/2,map_im.height()/2);
 		
         //Mise en place de du robot
 		QPixmap robot_im ; 
 		robot_im.load("petit_robot.png");
 		robot=scene->addPixmap(robot_im);
+		robot->setZValue(2);
 		
 		robot->setOffset(-robot_im.width()/2,-robot_im.height()/2);
 		//robot->setTransformOriginPoint(200,200);
@@ -48,6 +57,7 @@ FenPrincipale::FenPrincipale()
          
          //Connection des Signaux/Solts
          //connect( timer, SIGNAL(timeout()), this, SLOT(timerOut()) );
+       //  modifPosition(robot,-750,-1250,0);
          
 }
 
@@ -62,7 +72,7 @@ void FenPrincipale::canRecv(struct libcan::can_t packet)
 	
 	int x=((int16_t*)packet.b)[0];
 	int y=((int16_t*)packet.b)[1];
-	int theta=-((uint16_t*)packet.b)[2]/100;
+	int theta=((uint16_t*)packet.b)[2]/100; // recoit des centi deg
 	
 	cout<<"x:"<<x<<"mm "<<"y:"<<y<<"mm "<<"theta:"<<theta<<"dg"<<endl;
 	modifPosition(robot,x,y,theta);
@@ -80,9 +90,9 @@ void FenPrincipale::timerOut()
 void FenPrincipale::modifPosition(QGraphicsItem *robot1,int x , int y , int theta ){
 	int x_px, y_px;
 	//conversion de x1,y1 en px 
-	x_px=origine->x()+(x*mapLargeur_int)/3000;//prod en croix
-	y_px=origine->y()+(y*mapHauteur_int)/2000;
-	
+	x_px=origine->x()+(y*mapLargeur_int)/3000;//prod en croix
+	y_px=origine->y()+(x*mapHauteur_int)/2000;
+	// modif x <-> y
 	robot1->setPos(x_px,y_px);
-	robot1->setRotation(theta);
+	robot1->setRotation(90-theta);
 }

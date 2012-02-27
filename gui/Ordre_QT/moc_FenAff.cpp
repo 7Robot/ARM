@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'FenAff.h'
 **
-** Created: Fri Feb 24 12:45:08 2012
+** Created: Fri Feb 24 17:40:17 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

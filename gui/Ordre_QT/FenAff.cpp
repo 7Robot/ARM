@@ -16,18 +16,24 @@ FenAff::FenAff()
 	
 	liste = new QComboBox(this);
     liste->addItem("Asserv_Line");
-    liste->addItem("Rotation");
-    liste->addItem("Test_balise");
-    liste->addItem("Capteur");
+    liste->addItem("Asserv_Rot");
+    liste->addItem("Asserv_On");
+    liste->addItem("Asserv_Off");
+    liste->addItem("Odo_Set");
     //liste->move(30, 20);
     
     param1=new QSpinBox();
+    param1->setRange(-3000,3000);
     param2=new QSpinBox();
+     param2->setRange(-3000,3000);
+    param3=new QSpinBox();
+     param3->setRange(-3000,3000);
     
     layout1->addWidget(liste, 0,0);
     layout1->addWidget(param1, 0,1);
     layout1->addWidget(param2, 0,2);
-    layout1->addWidget(b_send, 0,3);
+    layout1->addWidget(param3, 0,3);
+    layout1->addWidget(b_send, 0,4);
 	frame1->setLayout(layout1);
 	
 	//parti aff de data 
@@ -72,19 +78,73 @@ FenAff::FenAff()
 
 void FenAff::send_ordre()
 {
-	cout <<"Ordre n°: "<<liste->currentIndex()<<" param1: "<<param1->value()<<" param2: "<<param2->value()<<endl ;
+	//cout <<"Ordre n°: "<<liste->currentIndex()<<" param1: "<<param1->value()<<" param2: "<<param2->value()<<endl ;
+	a = param1->value();
+	b = param2->value();
+	c= param3->value();
 	switch (liste->currentIndex()) {
 
 		case 0 :
+		ordre_AsservLigne();
 			break;
 
 		case 1 :
+		ordre_AsservRot();
 			break;
 
 		case 2 :
+		ordre_AsservON();
 			break;
+			
+		case 3 :
+		ordre_AsservOff();
+			break;
+			
+		case 4 :
+		ordre_OdoSet();
+			break;
+			
+			
 
 		default: 
 		  break;
 	}	
 }
+
+bool FenAff::send(int id, int length, ...)
+{
+	//printf("Can::send(%d, %d, ...)\n", id, length);
+	va_list ap;
+
+    va_start(ap, length);
+	can_vwrite(1,libcan::dec,id, length, ap); // a lodifier
+    va_end(ap);
+
+	return false;
+}
+
+void FenAff::ordre_AsservLigne(){
+	
+	a=round(a*13.6);
+	send(1025,4,((char*)&a)[0],((char*)&a)[1]);
+}
+
+void FenAff::ordre_AsservRot(){
+	
+	a=round(a*23.4);
+	send(1026,4,((char*)&a)[0],((char*)&a)[1]);
+}
+
+void FenAff::ordre_AsservON(){
+	send(1030,0);
+}
+
+void FenAff::ordre_AsservOff(){
+	send(1031,0);
+}
+
+void FenAff::ordre_OdoSet(){
+	uint16_t d = c * 100;
+	send(517,6,((char*)&a)[0],((char*)&a)[1],((char*)&b)[0],((char*)&b)[1],((char*)&d)[0],((char*)&d)[1]);
+}
+
