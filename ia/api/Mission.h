@@ -21,17 +21,20 @@ class Mission
 		virtual void sonar(int id, bool edge, bool nearby, int distance) {}
 		virtual void odometry(int x, int y, int theta) {}
 
-		void wait();
-		void signal();
+		//char * getnext();
 
 	protected:
 		MissionHandler * mh;
 		Can * can;
 		int state;
+		//void setnext(char*);
+		void wait();
+		void signal();
 
 	private:
 		pthread_cond_t cnd;
 		pthread_mutex_t mtx;
+		//char ** next;
 };
 
 #endif

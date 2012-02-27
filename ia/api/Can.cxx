@@ -117,7 +117,8 @@ bool Can::odoReset()
 {
 	printf("Can::odoReset()\n");
 
-	send(517, 6, 0, 0, 0, 0, 0, 0);
+	//send(517, 6, 0, 0, 0, 0, 0, 0);
+	send(517, 0);
 
 	return false;
 }

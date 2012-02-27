@@ -6,25 +6,25 @@
 
 #include <unistd.h> // close()
 #include <string.h> // memset()
-
+#include <errno.h>
+#include <stdio.h>
 
 #include "server.h"
-#include "log.h"
 
 int create_tcp_server(const char* hostname, const char* servname)
 {
-	int listening_socket;
+	int socket;
 
-	if ((listening_socket = create_socket_stream(hostname, servname)) < 0)
+	if ((socket = create_socket_stream(hostname, servname)) < 0)
 		return -1;
 
-	if (listen(listening_socket, 8) < 0) {	/* (Socket, Waiting list size) */
-		lerror(LOG_WARNING, "listen");
-		close(listening_socket);
+	if (listen(socket, 8) < 0) {	/* (Socket, Waiting list size) */
+		perror("listen");
+		close(socket);
 		return -1;
 	}
 	
-	return listening_socket;
+	return socket;
 }
 
 int create_socket_stream(const char* hostname, const char* servname)
@@ -44,7 +44,7 @@ int create_socket_stream(const char* hostname, const char* servname)
 
 	s = getaddrinfo(hostname, servname, &hints, &result);
 	if (s != 0) {
-		lprintf(LOG_NOTICE, "Error: %s", gai_strerror(s));
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
 		return -1;
 	}
 
@@ -53,15 +53,15 @@ int create_socket_stream(const char* hostname, const char* servname)
 		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		
 		if (sfd == -1) {
-			lerror(LOG_NOTICE, "socket");
+			perror("socket");
 			continue;
 		}
 
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0) {
 			break;	/* Success */
 		} else {
-			lerror(LOG_NOTICE, "bind");
-			lprintf(LOG_NOTICE, "Tried address: %s, service: ", inet_ntoa(((const struct sockaddr_in*)(rp->ai_addr))->sin_addr), servname);
+			perror("bind");
+			fprintf(stderr, "Tried address: %s, service: %s\n", inet_ntoa(((const struct sockaddr_in*)(rp->ai_addr))->sin_addr), servname);
 		}
 
 		close(sfd);
@@ -69,7 +69,7 @@ int create_socket_stream(const char* hostname, const char* servname)
 	freeaddrinfo(result);	/* No longer needed */
 
 	if (rp == NULL) {	/* No address succeeded */
-		lprintf(LOG_NOTICE, "Error: Could not bind");
+		fprintf(stderr, "Error: Could not bind\n");
 		return -1;
 	}
 
