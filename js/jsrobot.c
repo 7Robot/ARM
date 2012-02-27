@@ -37,7 +37,7 @@ char *button_names[KEY_MAX - BTN_MISC + 1] = {
 
 void event(int x, int y);
 void * update(void * arg);
-void demitour(int fd, int right);
+void turn(int fd, int right);
 
 #define NAME_LENGTH 128
 
@@ -126,9 +126,9 @@ int main (int argc, char **argv)
 		}
 
 		if (button[2]) {
-			demitour(sock, 0);
+			turn(sock, 0);
 		} else if (button[3]) {
-			demitour(sock, 1);
+			turn(sock, 1);
 		} else if (button[1]) {
 			struct can_t packet;
 			packet.id = 1025;
@@ -141,19 +141,21 @@ int main (int argc, char **argv)
 	return -1;
 }
 
-void demitour(int fd, int right)
+void turn(int fd, int right)
 {
-	struct can_t packet;
-	packet.id = 1026;
-	packet.length = 2;
-	if (right) {
+	short int value = 2106;
+	if (!right) {
+		value = -value;
+	}
+	// demi tour
+	/*if (right) {
 		packet.b[0] = 116;
 		packet.b[1] = 16;
 	} else {
 		packet.b[0] = 140;
 		packet.b[1] = 239;
-	}
-	can_pwrite(fd, bin, &packet);
+	}*/
+	can_write(fd, bin, 1026, 2, ((char*)&value)[0], ((char*)&value)[1]);
 }
 
 void event(int _x, int _y)
