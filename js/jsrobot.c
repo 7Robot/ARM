@@ -126,9 +126,13 @@ int main (int argc, char **argv)
 		}
 
 		if (button[2]) {
-			demitour(sock, 1);
-		} else if (button[3]) {
 			demitour(sock, 0);
+		} else if (button[3]) {
+			demitour(sock, 1);
+		} else if (button[1]) {
+			struct can_t packet;
+			packet.id = 1025;
+			packet.length = 2;
 		} else {
 			event(axis[0], -axis[1]);
 		}
@@ -146,8 +150,8 @@ void demitour(int fd, int right)
 		packet.b[0] = 116;
 		packet.b[1] = 16;
 	} else {
-		packet.b[0] = 239;
-		packet.b[1] = 231;
+		packet.b[0] = 140;
+		packet.b[1] = 239;
 	}
 	can_pwrite(fd, bin, &packet);
 }
