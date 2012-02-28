@@ -1,0 +1,5 @@
+l'entré du prgm est la console et un flux decimal il faut donc rediriger la sortie du serveur du port decimal 7772 vers l'entré du prgm
+
+nc r2d2.bde.n7 7772 |./QT_Eurobot2012
+
+Ordre_QT | nc r2d2.bde.n7 7772
