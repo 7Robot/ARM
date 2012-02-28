@@ -23,6 +23,7 @@ int hub_pout[MAX_HUB];
 int hub_pid[MAX_HUB];
 char * hub_port[MAX_HUB];
 int hub_count;
+void son_sig_handler(int signo);
 
 int add_hub(char * service);
 int rm_hub(char * service);
@@ -38,6 +39,16 @@ int main(int argc, char ** argv)
 
 	void * rvalue;
 	char * port = "13756";
+
+	struct sigaction action;
+	struct sigaction oldsate;
+	action.sa_handler = son_sig_handler;
+	sigemptyset(&(action.sa_mask));
+	action.sa_flags = SA_RESTART;
+	if (sigaction(SIGCHLD, &action, NULL) != 0) {
+		perror("sigaction");
+		return 1;
+	}
 
 	pthread_t pth;
 	pthread_create(&pth, NULL, run_server, port);
@@ -226,13 +237,13 @@ int rm_hub(char * service)
 	for (i = 0 ; i < hub_count ; i++) {
 		if (!strcmp(hub_port[i], service)) {
 			kill(hub_pid[i], 15);
-			close(hub_pin[i]);
+			/*close(hub_pin[i]);
 			close(hub_pout[i]);
 			free(hub_port[i]);
 			hub_pid[i] = hub_pid[hub_count-1];
 			hub_pin[i] = hub_pin[hub_count-1];
 			hub_pout[i] = hub_pout[hub_count-1];
-			hub_port[i] = hub_port[hub_count-1];
+			hub_port[i] = hub_port[hub_count-1];*/
 			break;
 		}
 	}
@@ -407,4 +418,41 @@ int nonblock(int fd)
         perror("fcntl");
         return -1;
     }
+}
+
+void son_sig_handler(int signo)
+{
+    sigset_t allsigmask, backupsigmask;
+    sigfillset(&allsigmask); /* All signals */
+    sigprocmask(SIG_SETMASK, &allsigmask, &backupsigmask);
+    int status;
+    int pid = wait(&status);
+	int i;
+	if (pthread_mutex_lock(&hub_mtx) < 0) {
+		perror("pthread_mutex_lock");
+		exit(1);
+	}
+	for (i = 0 ; i < hub_count ; i++) {
+		if (hub_pid[i] == pid) {
+			break;
+		}
+	}
+	if (i != hub_count) {
+		close(hub_pin[i]);
+		close(hub_pout[i]);
+		free(hub_port[i]);
+		hub_pid[i] = hub_pid[hub_count-1];
+		hub_pin[i] = hub_pin[hub_count-1];
+		hub_pout[i] = hub_pout[hub_count-1];
+		hub_port[i] = hub_port[hub_count-1];
+		hub_count--;
+	}
+	if (pthread_mutex_unlock(&hub_mtx) < 0) {
+		perror("pthread_mutex_unlock");
+		exit(1);
+	}
+    if (status != 0) {
+        fprintf(stderr, "Process %i quit with status %i\n", pid, status);
+    }
+    sigprocmask(SIG_SETMASK, &backupsigmask, NULL);
 }
