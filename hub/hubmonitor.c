@@ -54,22 +54,6 @@ int main(int argc, char ** argv)
 	/*pthread_t pth;
 	pthread_create(&pth, NULL, run_server, port);
 	pthread_join(pth, &rvalue);*/
-	if (chdir("/") < 0) {
-		perror("chdir");
-		exit(1);
-	}
-
-	if (fork() != 0) {
-		exit(0);
-	}
-	if (setsid() < 0) {
-		perror("setsid");
-		exit(1);
-	}
-	if (fork() != 0) {
-		exit(0);
-	}
-	printf("PID: %d\n", getpid());
 
 	if (argc > 1) {
 		run_server(argv[1]);
@@ -100,6 +84,22 @@ void * run_server(void * args)
 
 	printf("Listen on TCP port %s\n", PORT);
 
+	if (chdir("/") < 0) {
+		perror("chdir");
+		exit(1);
+	}
+
+	if (fork() != 0) {
+		exit(0);
+	}
+	if (setsid() < 0) {
+		perror("setsid");
+		exit(1);
+	}
+	if (fork() != 0) {
+		exit(0);
+	}
+	printf("PID: %d\n", getpid());
 	for (i = 0 ; i < getdtablesize() ; i++) {
 		if (i != sockserver) {
 			close(i);
