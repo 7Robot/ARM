@@ -5,10 +5,6 @@
 
 class Init: public Mission
 {
-	void init() {
-		printf("Init::init()\n");
-	}
-
 	void run() {
 		printf("Init::run\n");
 		state = 1;
@@ -16,7 +12,7 @@ class Init: public Mission
 		wait();
 	}
 
-	void microswitch(int id, bool status) {
+	bool microswitch(int id, bool status) {
 		printf("Init::microswitch: id = %d, state = %d\n", id, status);
 
 		switch (state) {
@@ -41,7 +37,7 @@ class Init: public Mission
 		}
 	}
 
-	void asserv(int erreur) {
+	bool asserv(int erreur) {
 		printf("Init::asserv: erreur = %d\n", erreur);
 
 		switch (state) {

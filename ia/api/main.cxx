@@ -142,7 +142,7 @@ int main(int argc, char ** argv)
 	
 	printf("Open bus can …\n");
 	if ((canbus = getsockfd(host, port)) < 0) {
-		fprintf(stderr, "error: getsockfd(%s, %s) failed", host, port);
+		fprintf(stderr, "error: getsockfd(%s, %s) failed\n", host, port);
 		return 1;
 	}
 	can.setup(canbus, Callback::recv);

@@ -49,12 +49,11 @@ bool MissionHandler::load(const char * name)
 
 	Mission * mission = ((Mission*(*)())create)();
 	mission->setup(this, can);
-	mission->init();
 	
 	missions.push_back(mission);
 	printf("Running missions: %d [+1]\n", missions.size());
 	
-	mission->run();
+	mission->init();
 
 	missions.pop_back();
 	printf("Running missions: %d [-1]\n", missions.size());

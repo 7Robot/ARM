@@ -4,20 +4,14 @@
 
 class Petit: public Mission
 {
-	void init() {
-		printf("Petit::init()\n");
-		mh->load("init");
-	}
-
 	void run() {
 		printf("Petit::run\n");
+		state = -2;
+		load("init");
 		state = -1;
-		wait();
-		mh->load("init");
-		//wait();
 	}
 
-	void microswitch(int id, bool status) {
+	bool microswitch(int id, bool status) {
 		printf("Petit::microswitch: id = %d, status = %d\n", id, status);
 		switch (state) {
 			case -1:
@@ -49,7 +43,7 @@ class Petit: public Mission
 		}
 	}
 
-	void asserv(int erreur) {
+	bool asserv(int erreur) {
 		printf("Petit::asserv: erreur = %d\n", erreur);
 
 		switch (state) {
@@ -129,16 +123,17 @@ class Petit: public Mission
 				break;
 			case 15:
 				state = 16;
+				load("init");
 				signal();
 				break;
 		}
 	}
 
-	void sonar(int id, bool edge, int value) {
+	bool sonar(int id, bool edge, int value) {
 		//printf("Demo::sonar: id = %d, edge = %d, value = %d\n", id, edge, value);
 	}
 
-	void odometry(int x, int y, int theta) {
+	bool odometry(int x, int y, int theta) {
 	}
 };
 

@@ -43,7 +43,9 @@ void Callback::microswitch(int id, bool status)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
-		((*it)->microswitch)(id, status);
+		if (((*it)->microswitch)(id, status)) {
+			break;
+		}
 	}
 }
 
@@ -51,7 +53,9 @@ void Callback::asserv(int error)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
-		((*it)->asserv)(error);
+		if (((*it)->asserv)(error)) {
+			break;
+		}
 	}
 }
 
@@ -59,7 +63,9 @@ void Callback::sonar(int id, bool edge, bool nearby, int distance)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
-		((*it)->sonar)(id, edge, nearby, distance);
+		if (((*it)->sonar)(id, edge, nearby, distance)) {
+			break;
+		}
 	}
 }
 
@@ -67,6 +73,8 @@ void Callback::odometry(int x, int y, int theta)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
-		((*it)->odometry)(x, y, theta);
+		if (((*it)->odometry)(x, y, theta)) {
+			break;
+		}
 	}
 }
