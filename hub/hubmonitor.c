@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/select.h>
@@ -15,14 +15,16 @@
 
 #define BUF_SIZE 256
 #define MAX_HUB 64
-#define MAX_CLIENT 4
+#define MAX_CLIENT 16
+#define PORT "13756"
 
-pthread_mutex_t hub_mtx;
+//pthread_mutex_t hub_mtx;
 int hub_pin[MAX_HUB];
 int hub_pout[MAX_HUB];
 int hub_pid[MAX_HUB];
 char * hub_port[MAX_HUB];
 int hub_count;
+void son_sig_handler(int signo);
 
 int add_hub(char * service);
 int rm_hub(char * service);
@@ -37,11 +39,27 @@ int main(int argc, char ** argv)
 	printf("TCP Hub server monitor\n");
 
 	void * rvalue;
-	char * port = "13756";
+	char * port = PORT;
 
-	pthread_t pth;
+	struct sigaction action;
+	struct sigaction oldsate;
+	action.sa_handler = son_sig_handler;
+	sigemptyset(&(action.sa_mask));
+	action.sa_flags = SA_RESTART;
+	if (sigaction(SIGCHLD, &action, NULL) != 0) {
+		perror("sigaction");
+		return 1;
+	}
+
+	/*pthread_t pth;
 	pthread_create(&pth, NULL, run_server, port);
-	pthread_join(pth, &rvalue);
+	pthread_join(pth, &rvalue);*/
+
+	if (argc > 1) {
+		run_server(argv[1]);
+	} else {
+		run_server(port);
+	}
 
 	return 0;
 }
@@ -64,6 +82,30 @@ void * run_server(void * args)
 		exit(1);
 	}
 
+	printf("Listen on TCP port %s\n", PORT);
+
+	if (chdir("/") < 0) {
+		perror("chdir");
+		exit(1);
+	}
+
+	if (fork() != 0) {
+		exit(0);
+	}
+	if (setsid() < 0) {
+		perror("setsid");
+		exit(1);
+	}
+	if (fork() != 0) {
+		exit(0);
+	}
+	printf("PID: %d\n", getpid());
+	for (i = 0 ; i < getdtablesize() ; i++) {
+		if (i != sockserver) {
+			close(i);
+		}
+	}
+	
 	fd_set lfdset;
 
 	int run = 1;
@@ -99,8 +141,8 @@ void * run_server(void * args)
 				close(sock);
 			} else {
 				client[clientc++] = sock;
-				fprintf(stdout, "%i connections [+1]\n", clientc);
-				fflush(stdout);
+				//fprintf(stdout, "%i connections [+1]\n", clientc);
+				//fflush(stdout);
 				char * motd = "Welcom to TCP Hub monitor.\nType 'help' for help.\n> ";
 				write(sock, motd, strlen(motd));
 			}
@@ -113,7 +155,7 @@ void * run_server(void * args)
 					}
 					close(client[i]);
 					client[i] = client[--clientc];
-					fprintf(stdout, "%i connections [-1]\n", clientc);
+					//fprintf(stdout, "%i connections [-1]\n", clientc);
 					continue;
 				}
 			}
@@ -160,13 +202,17 @@ int process_connection(int sock)
 					sprintf(answer, "Usage: 'stop <port>'.\nStop tcp hub server running on port <port>.\n");
 				} else if (!strcmp(arg, "quit")) {
 					sprintf(answer, "Close monitor connection.\n");
+				} else if (!strcmp(arg, "shutdown")) {
+					sprintf(answer, "Shutdown TCP Hub monitor server (and all sons).\n");
+				} else if (!strcmp(arg, "getpid")) {
+					sprintf(answer, "Print PID of TCP Hub monitor.\n");
 				} else if (!strcmp(arg, "list")) {
 					sprintf(answer, "Show current running tcp hub server.\n");
 				} else {
 					sprintf(answer, "Sorry, no help about command '%s'\n", arg);
 				}
 			} else {
-				sprintf(answer, "List of available commands: 'help', 'start', 'stop', 'list', 'quit'.\nFor help about an command, type 'help <command>'.\n");
+				sprintf(answer, "List of available commands: 'help', 'start', 'stop', 'list', 'quit', 'getpid', 'shutdown'.\nFor help about an command, type 'help <command>'.\n");
 			}
 		} else if (!strcmp(cmd, "start")) {
 			if (apos > 0) {
@@ -178,6 +224,8 @@ int process_connection(int sock)
 			} else {
 				sprintf(answer, "Usage: 'start <port>'.\n");
 			}
+		} else if (!strcmp(cmd, "shutdown")) {
+			exit(0);
 		} else if (!strcmp(cmd, "stop")) {
 			if (apos > 0) {
 				if (rm_hub(arg) < 0) {
@@ -188,11 +236,13 @@ int process_connection(int sock)
 			} else {
 				sprintf(answer, "Usage: 'stop <port>'.\n");
 			}
+		} else if (!strcmp(cmd, "getpid")) {
+			sprintf(answer, "PID of TCP Hub monitor: %d.\n", getpid());
 		} else if (!strcmp(cmd, "list")) {
-			if (pthread_mutex_lock(&hub_mtx) < 0) {
+			/*if (pthread_mutex_lock(&hub_mtx) < 0) {
 				perror("pthread_mutex_lock");
 				exit(1);
-			}
+			}*/
 			sprintf(answer, "+---------------+----------+\n|Service        |PID       |\n+---------------+----------+\n");
 			write(sock, answer, strlen(answer));
 			for (i = 0 ; i < hub_count ; i++) {
@@ -200,10 +250,10 @@ int process_connection(int sock)
 				write(sock, answer, strlen(answer));
 			}
 			sprintf(answer, "+---------------+----------+\nTotal: %d services\n", hub_count);
-			if (pthread_mutex_unlock(&hub_mtx) < 0) {
+			/*if (pthread_mutex_unlock(&hub_mtx) < 0) {
 				perror("pthread_mutex_unlock");
 				exit(1);
-			}
+			}*/
 		} else if (!strcmp(cmd, "quit")) {
 			return -1;
 		} else {
@@ -219,20 +269,20 @@ int rm_hub(char * service)
 	int i;
 	int r = 0;
 
-	if (pthread_mutex_lock(&hub_mtx) < 0) {
+	/*if (pthread_mutex_lock(&hub_mtx) < 0) {
 		perror("pthread_mutex_lock");
 		exit(1);
-	}
+	}*/
 	for (i = 0 ; i < hub_count ; i++) {
 		if (!strcmp(hub_port[i], service)) {
 			kill(hub_pid[i], 15);
-			close(hub_pin[i]);
+			/*close(hub_pin[i]);
 			close(hub_pout[i]);
 			free(hub_port[i]);
 			hub_pid[i] = hub_pid[hub_count-1];
 			hub_pin[i] = hub_pin[hub_count-1];
 			hub_pout[i] = hub_pout[hub_count-1];
-			hub_port[i] = hub_port[hub_count-1];
+			hub_port[i] = hub_port[hub_count-1];*/
 			break;
 		}
 	}
@@ -241,17 +291,17 @@ int rm_hub(char * service)
 	} else {
 		hub_count--;
 	}
-	if (pthread_mutex_unlock(&hub_mtx) < 0) {
+	/*if (pthread_mutex_unlock(&hub_mtx) < 0) {
 		perror("pthread_mutex_unlock");
 		exit(1);
-	}
+	}*/
 	return r;
 }
 
 int add_hub(char * service)
 {
-	printf("Starting hub on port %s ... ", service);
-	fflush(stdout);
+	//printf("Starting hub on port %s ... ", service);
+	//fflush(stdout);
 
 	int p[2][2];
 	int i;
@@ -285,12 +335,12 @@ int add_hub(char * service)
 			return 1;
 			break;
 		default: // father
-			if (pthread_mutex_lock(&hub_mtx) < 0) {
+			/*if (pthread_mutex_lock(&hub_mtx) < 0) {
 				printf("failed\n");
 				kill(pid, 15);
 				perror("pthread_mutex_lock");
 				return -1;
-			}
+			}*/
 			hub_pin[hub_count] = p[0][0];
 			hub_pout[hub_count] = p[1][0];
 			hub_pid[hub_count] = pid;
@@ -302,24 +352,24 @@ int add_hub(char * service)
 			}
 			strcpy(hub_port[hub_count], service);
 			hub_count++;
-			if (pthread_mutex_unlock(&hub_mtx) < 0) {
+			/*if (pthread_mutex_unlock(&hub_mtx) < 0) {
 				printf("failed\n");
 				kill(pid, 15);
 				perror("pthread_mutex_unlock");
 				return -1;
-			}
+			}*/
 			for (i = 0 ; i < 2 ; i++) {
 				close(p[i][1]);
 			}
-			printf("done\n");
+			//printf("done\n");
 	}
 
 	return 0;
 }
 
-int logpipe(int fd)
+/*int logpipe(int fd)
 {
-	printf("listen\n");
+	//printf("listen\n");
 	int r, w, i, j;
 	char buffer[BUF_SIZE];
 	char line[BUF_SIZE];
@@ -377,24 +427,24 @@ int logpipe(int fd)
 				b = 0;
 			}
 		}
-		/*if (i == 2 && pfd[1].revents & POLLOUT) {
+		*if (i == 2 && pfd[1].revents & POLLOUT) {
 			if ((w = write(1, buffer, r)) < 0) {
 				perror("write");
 			}
-		}*/
+		}*
 	}
 	perror("read");
-	////free(pfd);*/
+	////free(pfd);
 	return -1;
-}
+}*/
 
-int logline(char * line)
+/*int logline(char * line)
 {
 	printf("logline\n");
 	printf("%d\t\t%s\n", 1, line);
 	printf("logline end\n");
 	return 0;
-}
+}*/
 
 int nonblock(int fd)
 {
@@ -407,4 +457,41 @@ int nonblock(int fd)
         perror("fcntl");
         return -1;
     }
+}
+
+void son_sig_handler(int signo)
+{
+    sigset_t allsigmask, backupsigmask;
+    sigfillset(&allsigmask); /* All signals */
+    sigprocmask(SIG_SETMASK, &allsigmask, &backupsigmask);
+    int status;
+    int pid = wait(&status);
+	int i;
+	/*if (pthread_mutex_lock(&hub_mtx) < 0) {
+		perror("pthread_mutex_lock");
+		exit(1);
+	}*/
+	for (i = 0 ; i < hub_count ; i++) {
+		if (hub_pid[i] == pid) {
+			break;
+		}
+	}
+	if (i != hub_count) {
+		close(hub_pin[i]);
+		close(hub_pout[i]);
+		free(hub_port[i]);
+		hub_pid[i] = hub_pid[hub_count-1];
+		hub_pin[i] = hub_pin[hub_count-1];
+		hub_pout[i] = hub_pout[hub_count-1];
+		hub_port[i] = hub_port[hub_count-1];
+		hub_count--;
+	}
+	/*if (pthread_mutex_unlock(&hub_mtx) < 0) {
+		perror("pthread_mutex_unlock");
+		exit(1);
+	}*/
+    /*if (status != 0) {
+        fprintf(stderr, "Process %i quit with status %i\n", pid, status);
+    }*/
+    sigprocmask(SIG_SETMASK, &backupsigmask, NULL);
 }

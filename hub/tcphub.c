@@ -12,7 +12,7 @@
 
 #include "server.h"
 
-#define MAX_CONNECTION 4
+#define MAX_CONNECTION 64
 #define BUF_SIZE 1024
 #define ENV_SERVICE "TCPHUB_SERVICE"
 
