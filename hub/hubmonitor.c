@@ -202,6 +202,8 @@ int process_connection(int sock)
 					sprintf(answer, "Usage: 'stop <port>'.\nStop tcp hub server running on port <port>.\n");
 				} else if (!strcmp(arg, "quit")) {
 					sprintf(answer, "Close monitor connection.\n");
+				} else if (!strcmp(arg, "shutdown")) {
+					sprintf(answer, "Shutdown TCP Hub monitor server (and all sons).\n");
 				} else if (!strcmp(arg, "getpid")) {
 					sprintf(answer, "Print PID of TCP Hub monitor.\n");
 				} else if (!strcmp(arg, "list")) {
@@ -210,7 +212,7 @@ int process_connection(int sock)
 					sprintf(answer, "Sorry, no help about command '%s'\n", arg);
 				}
 			} else {
-				sprintf(answer, "List of available commands: 'help', 'start', 'stop', 'list', 'quit', 'getpid'.\nFor help about an command, type 'help <command>'.\n");
+				sprintf(answer, "List of available commands: 'help', 'start', 'stop', 'list', 'quit', 'getpid', 'shutdown'.\nFor help about an command, type 'help <command>'.\n");
 			}
 		} else if (!strcmp(cmd, "start")) {
 			if (apos > 0) {
@@ -222,6 +224,8 @@ int process_connection(int sock)
 			} else {
 				sprintf(answer, "Usage: 'start <port>'.\n");
 			}
+		} else if (!strcmp(cmd, "shutdown")) {
+			exit(0);
 		} else if (!strcmp(cmd, "stop")) {
 			if (apos > 0) {
 				if (rm_hub(arg) < 0) {
