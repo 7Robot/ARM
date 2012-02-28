@@ -15,7 +15,7 @@
 
 #define BUF_SIZE 256
 #define MAX_HUB 64
-#define MAX_CLIENT 4
+#define MAX_CLIENT 16
 #define PORT "13756"
 
 //pthread_mutex_t hub_mtx;
