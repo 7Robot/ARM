@@ -163,13 +163,13 @@ void FenAff::ordre_OdoSet(){
 void FenAff::send_violet(){
 	int16_t a=-750;
 	int16_t b=-1250;
-	int16_t d=-90;
+	uint16_t d= 9000;
 	send(517,6,((char*)&a)[0],((char*)&a)[1],((char*)&b)[0],((char*)&b)[1],((char*)&d)[0],((char*)&d)[1]);
 }
 
 void FenAff::send_rouge(){
-	int16_t a=750;
+	int16_t a=-750;
 	int16_t b=1250;
-	int16_t d=90;
+	int16_t d=27000;
 	send(517,6,((char*)&a)[0],((char*)&a)[1],((char*)&b)[0],((char*)&b)[1],((char*)&d)[0],((char*)&d)[1]);
 }
