@@ -13,6 +13,8 @@ FenAff::FenAff()
 	frame1->setFrameShape(QFrame::StyledPanel);
 	
 	b_send = new QPushButton("send");
+	b_violet = new QPushButton("violet");
+	b_rouge = new QPushButton("rouge");
 	
 	liste = new QComboBox(this);
     liste->addItem("Asserv_Line");
@@ -62,9 +64,17 @@ FenAff::FenAff()
 	
 	frame2->setLayout(layout2);
 	
+	QGridLayout *layout3 = new QGridLayout;
+//	 QVBoxLayout layout3 ;
+	layout3->addWidget(b_violet, 0,0);
+	layout3->addWidget(b_rouge, 0,1);
+	
 	//config du layout 0
 	layout0->addWidget(frame1,0,0);
 	layout0->addWidget(frame2,1,0);
+	layout0->addLayout(layout3,2,0);
+
+	
 	
 	// On configure la fenetre princip ale
 	setLayout(layout0);
@@ -73,6 +83,8 @@ FenAff::FenAff()
     
     //Conection des solts
     connect(b_send, SIGNAL(clicked()), this, SLOT(send_ordre()));
+    connect(b_violet, SIGNAL(clicked()), this, SLOT(send_violet()));
+    connect(b_rouge, SIGNAL(clicked()), this, SLOT(send_rouge()));
 }
 
 
@@ -148,3 +160,16 @@ void FenAff::ordre_OdoSet(){
 	send(517,6,((char*)&a)[0],((char*)&a)[1],((char*)&b)[0],((char*)&b)[1],((char*)&d)[0],((char*)&d)[1]);
 }
 
+void FenAff::send_violet(){
+	int16_t a=-750;
+	int16_t b=-1250;
+	int16_t d=-90;
+	send(517,6,((char*)&a)[0],((char*)&a)[1],((char*)&b)[0],((char*)&b)[1],((char*)&d)[0],((char*)&d)[1]);
+}
+
+void FenAff::send_rouge(){
+	int16_t a=750;
+	int16_t b=1250;
+	int16_t d=90;
+	send(517,6,((char*)&a)[0],((char*)&a)[1],((char*)&b)[0],((char*)&b)[1],((char*)&d)[0],((char*)&d)[1]);
+}

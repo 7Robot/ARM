@@ -42,11 +42,16 @@ FenPrincipale::FenPrincipale()
 		robot->setPos(origine->x(),origine->y());//placer au centre du palteau
 		
         //Mise en place de l'obstacle
-        obstacle = scene->addEllipse(0,0,15,15);
+        
+        QPen pen(Qt::black, 1, Qt::SolidLine);
+		QBrush brush(Qt::black);
+		//scene.addRect(rectangle, pen, brush);
+        
+        obstacle = scene->addEllipse(0,0,15,15,pen,brush);
         obstacle->setZValue(1);
         obstacle->setPos(origine->x(),origine->y());
         
-        obstacle2 = scene->addEllipse(0,0,15,15);
+        obstacle2 = scene->addEllipse(0,0,15,15,pen,brush);
         obstacle2->setZValue(1);
         obstacle2->setPos(origine->x(),origine->y());
         

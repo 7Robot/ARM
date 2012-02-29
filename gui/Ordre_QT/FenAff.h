@@ -23,9 +23,14 @@ class FenAff : public QWidget
         
   private slots:
       void send_ordre();
-      
+      void send_violet();
+      void send_rouge();
+       
     private:
 		QPushButton *b_send;
+		QPushButton *b_violet;
+		QPushButton *b_rouge;
+		
 		QSpinBox *param1;
 		QSpinBox *param2;
 		QSpinBox *param3;
