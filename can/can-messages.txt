@@ -1,7 +1,4 @@
-1151	resetAsserv
-639	resetOdo
-383	resetCapteur
-255	resetTourelle
+127	globalReset
 513	odoReq
 514	odoMute
 515	odoUnmute
@@ -14,9 +11,9 @@
 1151	asservStop
 1030	asservOn
 1031	asservOff
-1032	asserSpeedRampe
-132	tourelleMini
-133	tourelleFull
+1032	asserRamp
+132	tourelleReq
+133	tourelleData
 134	tourelleMute
 135	tourelleUnmute
 136	tourelleOff
@@ -41,4 +38,17 @@
 257	bumpBack1
 258	bumpFront0
 259	bumpFront1
-
+304	sharp4Req
+306	sharp5Req
+308	sharp6Req
+310	sharp7Req
+312	sharp4Mute
+313	sharp4Unmute
+314	sharp5Mute
+315	sharp5Unmute
+316	sharp6Mute
+317	sharp6Unmute
+318	sharp7Mute
+319	sharp7Unmute
+260	killSwitch0
+261	killSwitch1

@@ -9,13 +9,9 @@
 
 class Template: public Mission
 {
-	void init() {
-		printf("Template::init()\n");
-		mh->load("init"); // Chargement mission « init »
-	}
-	
 	void run() {
 		printf("Template::run\n");
+		load("init"); // Chargement mission « init »
 		//usleep(50 * 1000); /* attente 50 ms */
 		//can->fwd(500); /* avance de 500 mm */
 		//can->rotate(50); /* tourne de 50° */
@@ -24,22 +20,22 @@ class Template: public Mission
 		// fin mission
 	}
 	
-	void microswitch(int id, bool state) {
+	bool microswitch(int id, bool state) {
 		printf("Template::microswitch: id = %d, state = %d\n", id, state);
 		if (id = 1 && !state) { // bouton avant relaché
 			signal(); // on stop le wait()
 		}
 	}
 	
-	void asserv(int erreur) {
+	bool asserv(int erreur) {
 		printf("Template::asserv: erreur = %d\n", erreur);
 	}
 	
-	void sonar(int id, bool edge, int value) {
+	bool sonar(int id, bool edge, int value) {
 		printf("Template::sonar: id = %d, edge = %d, value = %d\n", id, edge, value);
 	}
 
-	void odo(int x, int y, int theta) {
+	bool odo(int x, int y, int theta) {
 		printf("Template::odo: x = %d, y = %d, theta = %d\n", x, y, theta);
 	}
 };

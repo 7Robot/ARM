@@ -6,7 +6,20 @@ void Mission::setup(MissionHandler * mh, Can * can)
 		this->can = can;
 		cnd = PTHREAD_COND_INITIALIZER;
 		mtx = PTHREAD_MUTEX_INITIALIZER;
-		//next = NULL;
+		next = NULL;
+}
+
+void Mission::init()
+{
+	run();
+	if (next == NULL) {
+		wait();
+	}
+	while (next != NULL) {
+		mh->load(next);
+		next = NULL;
+		wait();
+	}
 }
 
 void Mission::wait()
@@ -26,12 +39,8 @@ void Mission::signal()
 	pthread_mutex_unlock(&mtx);
 }
 
-/*void Mission::setnext(char * mission)
+void Mission::load(char * mission)
 {
-	*next = mission;
+	next = mission;
+	signal();
 }
-
-char * Mission::getnext()
-{
-	return *next;
-}*/

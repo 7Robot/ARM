@@ -122,3 +122,21 @@ bool Can::odoReset()
 
 	return false;
 }
+
+bool Can::sonarThres(int id, int threshold)
+{
+	printf("Can::sonarThres(%d, %d)\n", id, threshold);
+
+	int cid = 0;
+	int16_t t = threshold;
+	if (id == 0) {
+		cid = 328;
+	} else if (id == 1) {
+		cid = 360;
+	}
+	if (cid != 0) {
+		send(cid, 2, ((char*)&t)[0], ((char*)&t)[1]);
+	}
+
+	return false;
+}

@@ -15,6 +15,7 @@ class Can
 		bool fwd(int left_speed, int right_speed); /* -80 à 80 */
 		bool speed(int left_speed, int right_speed); /* -80 à 80 */
 		bool odoReset();
+		bool sonarThres(int id, int threshold);
 
 	private:
 		int canbus;
