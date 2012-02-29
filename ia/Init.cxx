@@ -3,17 +3,19 @@
 
 #include "Mission.h"
 
+#define BACK 163
+#define LEFT 163
+
 class Init: public Mission
 {
 	void run() {
 		printf("Init::run\n");
 		state = 1;
 		can->fwd(-20, -20);
-		wait();
 	}
 
 	bool microswitch(int id, bool status) {
-		printf("Init::microswitch: id = %d, state = %d\n", id, status);
+		printf("Init::microswitch[%d]: id = %d, state = %d\n", state, id, status);
 
 		switch (state) {
 			case 1:
@@ -22,7 +24,7 @@ class Init: public Mission
 					can->stop();
 					state = 2;
 					usleep(300000);
-					can->fwd(200);
+					can->fwd(BACK);
 				}
 				break;
 			case 4:
@@ -31,14 +33,16 @@ class Init: public Mission
 					can->stop();
 					state = 5;
 					usleep(300000);
-					can->fwd(-150);
+					can->fwd(-LEFT);
 				}
 				break;
 		}
+		
+		return true;
 	}
 
 	bool asserv(int erreur) {
-		printf("Init::asserv: erreur = %d\n", erreur);
+		printf("Init::asserv[%d]: erreur = %d\n", state, erreur);
 
 		switch (state) {
 			case 2:
@@ -58,6 +62,8 @@ class Init: public Mission
 				signal();
 				break;
 		}
+		
+		return true;
 	}
 };
 

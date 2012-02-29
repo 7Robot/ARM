@@ -1,6 +1,8 @@
 #ifndef _MISSION_HANDLER_H_
 #define _MISSION_HANDLER_H_
 
+#include <pthread.h>
+
 #include <vector>
 #include <string>
 
@@ -15,6 +17,7 @@ class MissionHandler
 		MissionHandler(char * basedir, Can * can);
 		bool load(const char * mission);
 		static std::vector<Mission*> missions;
+		static pthread_mutex_t mtx;
 
 	private:
 		char * basedir;

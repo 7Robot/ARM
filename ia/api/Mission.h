@@ -13,10 +13,10 @@ class Mission
 	public:
 		void setup(MissionHandler * mh, Can * can);
 		void init();
-		virtual bool microswitch(int id, bool status) {}
-		virtual bool asserv(int error) {}
-		virtual bool sonar(int id, bool edge, bool nearby, int distance) {}
-		virtual bool odometry(int x, int y, int theta) {}
+		virtual bool microswitch(int id, bool status) { return true; }
+		virtual bool asserv(int error) { return true; }
+		virtual bool sonar(int id, bool edge, bool nearby, int distance) { return true; }
+		virtual bool odometry(int x, int y, int theta) { return true; }
 
 	protected:
 		Can * can;
@@ -27,10 +27,11 @@ class Mission
 
 	private:
 		virtual void run() = 0;
-		MissionHandler * mh;
 		pthread_cond_t cnd;
 		pthread_mutex_t mtx;
 		char * next;
+		MissionHandler * mh;
+		int runthreadid;
 };
 
 #endif

@@ -10,6 +10,7 @@ MissionHandler::MissionHandler(char * basedir, Can * can)
 {
 	this->basedir = basedir;
 	this->can = can;
+	mtx = PTHREAD_MUTEX_INITIALIZER;
 }
 
 bool MissionHandler::load(const char * name)
@@ -49,13 +50,17 @@ bool MissionHandler::load(const char * name)
 
 	Mission * mission = ((Mission*(*)())create)();
 	mission->setup(this, can);
-	
+
+	pthread_mutex_lock(&MissionHandler::mtx); // FIXME
 	missions.push_back(mission);
+	pthread_mutex_unlock(&MissionHandler::mtx);
 	printf("Running missions: %d [+1]\n", missions.size());
-	
+
 	mission->init();
 
+	pthread_mutex_lock(&MissionHandler::mtx);
 	missions.pop_back();
+	pthread_mutex_unlock(&MissionHandler::mtx);
 	printf("Running missions: %d [-1]\n", missions.size());
 
 	return false;

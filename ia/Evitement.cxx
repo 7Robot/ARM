@@ -63,6 +63,8 @@ class Evitement: public Mission
 				}
 				break;
 		}
+
+		return true;
 	}
 
 	/*void odo(int x, int y, int theta) {

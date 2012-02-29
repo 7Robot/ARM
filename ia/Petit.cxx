@@ -6,19 +6,19 @@ class Petit: public Mission
 {
 	void run() {
 		printf("Petit::run\n");
-		state = -2;
-		load("init");
+		state = -100;
+		mh->load("init");
 		state = -1;
 	}
 
 	bool microswitch(int id, bool status) {
-		printf("Petit::microswitch: id = %d, status = %d\n", id, status);
+		printf("Petit::microswitch[%d]: id = %d, status = %d\n", state, id, status);
 		switch (state) {
 			case -1:
 				if (id == 0) {
 					state = 0;
 					usleep(100000);
-					can->fwd(298);
+					can->fwd(300);
 				}
 				break;
 			case 7:
@@ -41,10 +41,12 @@ class Petit: public Mission
 				}
 				break;
 		}
+
+		return true;
 	}
 
 	bool asserv(int erreur) {
-		printf("Petit::asserv: erreur = %d\n", erreur);
+		printf("Petit::asserv[%d]: erreur = %d\n", state, erreur);
 
 		switch (state) {
 			case 0:
@@ -107,7 +109,7 @@ class Petit: public Mission
 				break;
 			case 11:
 				state = 12;
-				can->fwd(1500);
+				can->fwd(1450);
 				break;
 			case 12:
 				state = 13;
@@ -115,7 +117,7 @@ class Petit: public Mission
 				break;
 			case 13:
 				state = 14;
-				can->fwd(1700);
+				can->fwd(1800);
 				break;
 			case 14:
 				state = 15;
@@ -123,17 +125,22 @@ class Petit: public Mission
 				break;
 			case 15:
 				state = 16;
-				load("init");
+				mh->load("init");
+				mh->load("evitement");
 				signal();
 				break;
 		}
+
+		return true;
 	}
 
 	bool sonar(int id, bool edge, int value) {
 		//printf("Demo::sonar: id = %d, edge = %d, value = %d\n", id, edge, value);
+		return true;
 	}
 
 	bool odometry(int x, int y, int theta) {
+		return true;
 	}
 };
 
