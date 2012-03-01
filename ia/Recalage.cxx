@@ -6,33 +6,33 @@
 #define BACK 163
 #define LEFT 163
 
-class Init: public Mission
+class Recalage: public Mission
 {
 	void run() {
-		printf("Init::run\n");
-		name = "Init";
+		printf("Recalage::run\n");
+		name = "Recalage";
 		state = 1;
-		can->fwd(-20, -20);
+		can->rotate(90);
 	}
 
 	bool microswitch(int id, bool status) {
 		switch (state) {
-			case 1:
-				if (id == 0) {
+			case 2:
+				if (id == 0 && status) {
 					usleep(700000);
 					can->stop();
-					state = 2;
+					state = 3;
 					usleep(300000);
-					can->fwd(BACK);
+					can->fwd(LEFT);
 				}
 				break;
-			case 4:
-				if (id == 1) {
+			case 5:
+				if (id == 0 && status) {
 					usleep(700000);
 					can->stop();
-					state = 5;
+					state = 6;
 					usleep(300000);
-					can->fwd(-LEFT);
+					can->fwd(BACK);
 				}
 				break;
 		}
@@ -42,13 +42,17 @@ class Init: public Mission
 
 	bool asserv(int erreur) {
 		switch (state) {
-			case 2:
-				state = 3;
-				can->rotate(-90);
+			case 1:
+				state = 2;
+				can->fwd(-20, -20);
 				break;
 			case 3:
 				state = 4;
-				can->fwd(20, 20);
+				can->rotate(-90);
+				break;
+			case 4:
+				state = 5;
+				can->fwd(-20, -20);
 				break;
 			case 5:
 				state = 6;
@@ -66,6 +70,6 @@ class Init: public Mission
 
 extern "C" {
 	Mission * create() {
-		return new Init();
+		return new Recalage();
 	}
 }

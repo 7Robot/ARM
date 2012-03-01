@@ -27,9 +27,7 @@ void MissionHandler::setup(const char * basedir, Can * can)
 bool MissionHandler::handler(const char * init)
 {
 	char * n = NULL;
-	next = NULL; // facultatif
 	load(init);
-	//wait();
 	while (true) {
 		while (next != NULL && strcmp(next, "unload")) {
 			n = next;
@@ -105,7 +103,7 @@ bool MissionHandler::load(const char * name)
 			strcat(path, ".so");
 			hndl = dlopen(path, RTLD_LAZY);
 			if (hndl == NULL) {
-				fprintf(stderr, "ldopen failed(%s)\n", dlerror());
+				fprintf(stderr, "dlopen failed(%s)\n", dlerror());
 				return true;
 			}
 		}
@@ -128,6 +126,7 @@ bool MissionHandler::load(const char * name)
 	
 	printf("Running missions: %d [+1]\n", missions.size());
 
+	// TODO parse name
 	mission->run();
 
 	return false;

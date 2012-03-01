@@ -8,7 +8,7 @@ class Petit: public Mission
 		printf("Petit::run\n");
 		name = "Petit";
 		state = -2;
-		load("init");
+		load("recalage");
 	}
 
 	void mission()
@@ -138,7 +138,7 @@ class Petit: public Mission
 				break;
 			case 15:
 				state = 16;
-				load("init");
+				load("recalage");
 				break;
 		}
 
