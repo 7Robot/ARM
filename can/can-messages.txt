@@ -38,6 +38,10 @@
 257	bumpBack1
 258	bumpFront0
 259	bumpFront1
+272	sharp4Dist
+274	sharp5Dist
+276	sharp6Dist
+278	sharp7Dist
 304	sharp4Req
 306	sharp5Req
 308	sharp6Req
@@ -52,3 +56,4 @@
 319	sharp7Unmute
 260	killSwitch0
 261	killSwitch1
+64	suiveurValues
