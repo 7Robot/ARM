@@ -14,7 +14,7 @@ class Can
 		bool fwd(int distance); /* mm */
 		bool fwd(int left_speed, int right_speed); /* -80 à 80 */
 		bool speed(int left_speed, int right_speed); /* -80 à 80 */
-		bool odoReset();
+		bool odoSet(int16_t x, int16_t y, int16_t t);
 		bool sonarThres(int id, int threshold);
 
 	private:

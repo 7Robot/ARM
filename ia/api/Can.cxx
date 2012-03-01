@@ -113,12 +113,14 @@ bool Can::speed(int left, int right)
 	return false;
 }
 
-bool Can::odoReset()
+bool Can::odoSet(int16_t x, int16_t y, int16_t t) // FIXME mettre des unités cm et ° ?
 {
 	printf("Can::odoReset()\n");
 
-	//send(517, 6, 0, 0, 0, 0, 0, 0);
-	send(517, 0);
+	send(517, 6, ((char*)&x)[0], ((char*)&x)[1],
+		((char*)&y)[0], ((char*)&y)[1],
+		((char*)&t)[0], ((char*)&t)[1]);
+	//send(517, 0);
 
 	return false;
 }
