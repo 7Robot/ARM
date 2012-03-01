@@ -6,7 +6,7 @@
 class Can
 {
 	public:
-		bool setup(int canbus, void (*)(struct libcan::can_t));
+		Can(int canbus, void (*)(struct libcan::can_t));
 		bool send(int id, int length, ...);
 		bool send(struct libcan::can_t * packet);
 		bool stop();

@@ -135,22 +135,23 @@ int main(int argc, char ** argv)
 	printf("\tStarting mission: %s\n", mission);
 	printf("\tMissions directory: %s\n\n", mission_directory);
 
-	Can can;
 
-	printf("Create mission handler …\n");
-	MissionHandler mh(mission_directory, &can);
+	//printf("Create mission handler …\n");
+	//MissionHandler mh(mission_directory, &can);
 	
 	printf("Open bus can …\n");
 	if ((canbus = getsockfd(host, port)) < 0) {
 		fprintf(stderr, "error: getsockfd(%s, %s) failed\n", host, port);
 		return 1;
 	}
-	can.setup(canbus, Callback::recv);
+	Can can(canbus, Callback::recv);
+
+	MissionHandler::setup(mission_directory, &can);
 
 	/////////////////////////////////////////////////////////////////////
 	
-	if (mh.load(mission)) {
-		fprintf(stderr, "error: failed to load mission « %s »\n", mission);
+	if (MissionHandler::handler(mission)) {
+		fprintf(stderr, "MissionHandler::handler failed\n");
 		return 1;
 	}
 

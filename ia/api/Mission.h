@@ -11,8 +11,12 @@ class MissionHandler;
 class Mission
 {
 	public:
-		void setup(MissionHandler * mh, Can * can);
-		void init();
+		void setup(Can * can);
+		//void init();
+		virtual void run() = 0;
+		int getState() { return state; }
+		char * getName() { return name; }
+		virtual void mission() {}
 		virtual bool microswitch(int id, bool status) { return true; }
 		virtual bool asserv(int error) { return true; }
 		virtual bool sonar(int id, bool edge, bool nearby, int distance) { return true; }
@@ -21,17 +25,18 @@ class Mission
 	protected:
 		Can * can;
 		int state;
-		void wait();
-		void signal();
+		char * name;
+		//void wait();
+		//void signal();
 		void load(char * mission);
+		void end();
 
 	private:
-		virtual void run() = 0;
-		pthread_cond_t cnd;
-		pthread_mutex_t mtx;
-		char * next;
-		MissionHandler * mh;
+		//pthread_cond_t cnd;
+		//pthread_mutex_t mtx;
+		//char * next;
 		int runthreadid;
+		int signaux;
 };
 
 #endif

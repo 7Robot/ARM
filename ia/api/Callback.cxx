@@ -42,13 +42,14 @@ void Callback::recv(struct libcan::can_t packet) {
 	pthread_mutex_unlock(&MissionHandler::mtx); // FIXME
 	
 }
-	
+
 void Callback::microswitch(int id, bool status)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+		printf("\t[%d]\t%s::microswitch\n", ((*it)->getState)(), ((*it)->getName)());
 		if (!((*it)->microswitch)(id, status)) {
-			printf("Callback propagation stoped\n");
+			printf("\tCallback propagation stopped\n");
 			break;
 		}
 	}
@@ -58,8 +59,9 @@ void Callback::asserv(int error)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+		printf("\t[%d]\t%s::asserv\n", ((*it)->getState)(), ((*it)->getName)());
 		if (!((*it)->asserv)(error)) {
-			printf("Callback propagation stoped\n");
+			printf("\tCallback propagation stopped\n");
 			break;
 		}
 	}
@@ -69,8 +71,9 @@ void Callback::sonar(int id, bool edge, bool nearby, int distance)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+		printf("\t[%d]\t%s::sonar\n", ((*it)->getState)(), ((*it)->getName)());
 		if (!((*it)->sonar)(id, edge, nearby, distance)) {
-			printf("Callback propagation stoped\n");
+			printf("\tCallback propagation stopped\n");
 			break;
 		}
 	}
@@ -80,8 +83,9 @@ void Callback::odometry(int x, int y, int theta)
 {
     std::vector<Mission*>::iterator it;
 	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+		printf("\t[%3d]\t%s::odometry\n", ((*it)->getState)(), ((*it)->getName)());
 		if (!((*it)->odometry)(x, y, theta)) {
-			printf("Callback propagation stoped\n");
+			printf("\tCallback propagation stopped\n");
 			break;
 		}
 	}

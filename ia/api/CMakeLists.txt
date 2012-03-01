@@ -4,4 +4,7 @@ add_executable(ia main.cxx Can.cxx MissionHandler.cxx Callback.cxx Mission.cxx)
 
 set_target_properties(ia PROPERTIES COMPILE_FLAGS -std=gnu++0x)
 
+file(GLOB SRC *.cxx)
+set_source_files_properties(${SRC} PROPERTIES COMPILE_FLAGS -Wno-write-strings)
+
 target_link_libraries(ia dl functions can)

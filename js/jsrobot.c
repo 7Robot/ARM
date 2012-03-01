@@ -18,6 +18,7 @@
 #include <linux/joystick.h>
 
 #define DELAY 200
+#define NB_CONSIGNE 3
 
 char *axis_names[ABS_MAX + 1] = {
 "X", "Y", "Z", "Rx", "Ry", "Rz", "Throttle", "Rudder", 
@@ -43,6 +44,7 @@ void turn(int fd, int right);
 
 int left;
 int right;
+int b[4] = { 0 };
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t cnd_mtx = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cnd = PTHREAD_COND_INITIALIZER;
@@ -125,15 +127,19 @@ int main (int argc, char **argv)
 			break;
 		}
 
-		if (button[2]) {
+		if (button[1] && !b[1]) {
+			b[1] = 1;
+			can_write(sock, bin, 1051, 0);
+		} else if (button[3] && !b[2]) {
+			b[2] = 1;
 			turn(sock, 0);
-		} else if (button[3]) {
+		} else if (button[3] && !b[3]) {
+			b[3] = 1;
 			turn(sock, 1);
-		} else if (button[1]) {
-			struct can_t packet;
-			packet.id = 1025;
-			packet.length = 2;
 		} else {
+			b[1] = 0;
+			b[2] = 0;
+			b[3] = 0;
 			event(axis[0], -axis[1]);
 		}
 	}
@@ -181,10 +187,6 @@ void event(int _x, int _y)
 		right += x * (y-80) / 160;
 	}
 
-	printf("\r");
-	printf("%+04d %+04d", left, right);
-	fflush(stdout);
-
 	if (pthread_mutex_unlock(&mtx) < 0) {
 		perror("pthread_mutex_unlock");
 		exit(1);
@@ -199,11 +201,17 @@ void * update(void * arg)
 {
 	int l = 81;
 	int r = 81;
+	int u = 0;
 	struct can_t packet;
 	packet.id = 1032;
 	packet.length = 2;
 	while (1) {
-		if (l != left || r != right) {
+		if (l == left && r == right) {
+			u++;
+		} else {
+			u = 0;
+		}
+		if (u < NB_CONSIGNE) {
 			if (pthread_mutex_lock(&mtx) < 0) {
 				perror("pthread_mutex_lock");
 				exit(1);
@@ -223,5 +231,9 @@ void * update(void * arg)
 		    pthread_cond_wait(&cnd, &cnd_mtx);
 		    pthread_mutex_unlock(&cnd_mtx);
 		}
+		printf("\r");
+		printf("%+04d %+04d %d %d %d", left, right, b[1], b[2], b[3]);
+		fflush(stdout);
+
 	}
 }

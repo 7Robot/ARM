@@ -6,13 +6,28 @@ class Petit: public Mission
 {
 	void run() {
 		printf("Petit::run\n");
-		state = -100;
-		mh->load("init");
-		state = -1;
+		name = "Petit";
+		state = -2;
+		load("init");
+	}
+
+	void mission()
+	{
+		switch (state) {
+			case -2:
+				state = -1;
+				break;
+			case 16:
+				state = 17;
+				load("evitement");
+				break;
+			case 17:
+				end();
+				break;
+		}
 	}
 
 	bool microswitch(int id, bool status) {
-		printf("Petit::microswitch[%d]: id = %d, status = %d\n", state, id, status);
 		switch (state) {
 			case -1:
 				if (id == 0) {
@@ -28,7 +43,6 @@ class Petit: public Mission
 					usleep(100000);
 					can->fwd(-200);
 					state = 8;
-					//signal();
 				}
 				break;
 			case 52:
@@ -46,7 +60,6 @@ class Petit: public Mission
 	}
 
 	bool asserv(int erreur) {
-		printf("Petit::asserv[%d]: erreur = %d\n", state, erreur);
 
 		switch (state) {
 			case 0:
@@ -125,9 +138,7 @@ class Petit: public Mission
 				break;
 			case 15:
 				state = 16;
-				mh->load("init");
-				mh->load("evitement");
-				signal();
+				load("init");
 				break;
 		}
 
@@ -135,7 +146,6 @@ class Petit: public Mission
 	}
 
 	bool sonar(int id, bool edge, int value) {
-		//printf("Demo::sonar: id = %d, edge = %d, value = %d\n", id, edge, value);
 		return true;
 	}
 

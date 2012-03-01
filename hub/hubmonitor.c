@@ -330,7 +330,7 @@ int add_hub(char * service)
 				}
 				close(p[i][1]);
 			}
-			execlp("tcphub", "hubhandler", service, NULL);
+			execlp("tcphub", "tcphub", service, NULL);
 			perror("execlp");
 			return 1;
 			break;

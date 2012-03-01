@@ -10,13 +10,12 @@ class Init: public Mission
 {
 	void run() {
 		printf("Init::run\n");
+		name = "Init";
 		state = 1;
 		can->fwd(-20, -20);
 	}
 
 	bool microswitch(int id, bool status) {
-		printf("Init::microswitch[%d]: id = %d, state = %d\n", state, id, status);
-
 		switch (state) {
 			case 1:
 				if (id == 0) {
@@ -42,8 +41,6 @@ class Init: public Mission
 	}
 
 	bool asserv(int erreur) {
-		printf("Init::asserv[%d]: erreur = %d\n", state, erreur);
-
 		switch (state) {
 			case 2:
 				state = 3;
@@ -59,7 +56,7 @@ class Init: public Mission
 				break;
 			case 6:
 				can->odoReset();
-				signal();
+				end();
 				break;
 		}
 		

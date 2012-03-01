@@ -8,28 +8,28 @@
 
 using namespace libcan;
 
-bool Can::setup(int canbus, void (*callback)(struct can_t))
+Can::Can(int canbus, void (*callback)(struct can_t))
 {
-	//printf("Can::setup(%d, %p)\n", canbus, callback);
+	printf("Can::can(%d, %p)\n", canbus, callback);
 
 	this->canbus = canbus;
 
     can_ctx * ctx;
     if (can_init(&ctx) < 0) {
         perror("can_init");
-        return true;
+        //return true;
     }
 
     if (can_register_callback(ctx, 0, 0, callback) < 0) {
         perror("can_register_callback");
-        return true;
+        //return true;
     }
     if (can_listen_on(ctx, canbus, libcan::bin) < 0) {
         perror("can_listen_on");
-        return true;
+        //return true;
     }
 
-	return false;
+	//return false;
 }
 
 bool Can::send(int id, int length, ...)

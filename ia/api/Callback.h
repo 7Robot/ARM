@@ -10,6 +10,8 @@ class Callback
 		static void recv(struct libcan::can_t packet);
 	
 	private:
+		//static void mission();
+
 		static void microswitch(int id, bool status);
 		static void asserv(int error);
 		static void sonar(int id, bool edge, bool nearby, int distance);
