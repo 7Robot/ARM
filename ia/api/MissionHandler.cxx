@@ -18,15 +18,19 @@ void MissionHandler::setup(const char * basedir, Can * can)
 	MissionHandler::can = can;
 }
 
-bool MissionHandler::load(const char * name)
+Mission * MissionHandler::load(const char * name)
 {
 	printf("MissionHandler::load(%s)\n", name);
+
+	if (name == NULL) {
+		return NULL;
+	}
 
 	void *hndl;
 	char path[256];
 
 	// try "libname.so"
-	strcat(path, "lib");
+	strcpy(path, "lib");
 	strcat(path, name);
 	strcat(path, ".so");
 	hndl = dlopen(path, RTLD_LAZY);
@@ -39,14 +43,14 @@ bool MissionHandler::load(const char * name)
 		hndl = dlopen(path, RTLD_LAZY);
 		if (hndl == NULL) {
 			fprintf(stderr, "dlopen failed(%s)\n", dlerror());
-			return true;
+			return NULL;
 		}
 	}
 
 	void * create = dlsym(hndl, "create");
 	if (create == NULL) {
 		fprintf(stderr, "dlsym failed (%s)\n", dlerror());
-		return true;
+		return NULL;
 	}
 	
 	Mission * mission = ((Mission*(*)())create)();
@@ -62,7 +66,7 @@ bool MissionHandler::load(const char * name)
 	printf("%s::start\n", path);
 	mission->start();
 
-	return false;
+	return mission;
 }
 
 bool MissionHandler::unload(Mission * mission) // TODO

@@ -25,6 +25,7 @@ class Can
 
 	private:
 		int canbus;
+		int verbose;
 	
 };
 

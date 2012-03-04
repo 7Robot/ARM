@@ -14,7 +14,7 @@
 
 using namespace libcan;
 
-Can::Can(int canbus)
+Can::Can(int canbus): verbose(1)
 {
 	printf("Can::can(%d)\n", canbus);
 
@@ -62,7 +62,9 @@ bool Can::send(struct libcan::can_t * packet)
 
 bool Can::stop()
 {
-	printf("Can::stop()\n");
+	if (verbose > 0) {
+		printf("Can::stop()\n");
+	}
 
 	send(1051, 0);
 
@@ -71,7 +73,9 @@ bool Can::stop()
 
 bool Can::rotate(int angle)
 {
-	printf("Can::rotate(%d)\n", angle);
+	if (verbose > 0) {
+		printf("Can::rotate(%d)\n", angle);
+	}
 	
 	int16_t a = round(angle*COEF_ROTATION);
 	send(1026, 2, ((char*)&a)[0], ((char*)&a)[1]);
@@ -89,7 +93,9 @@ bool Can::rotate(int angle)
 
 bool Can::fwd(int distance)
 {
-	printf("Can::fwd(%d)\n", distance);
+	if (verbose > 0) {
+		printf("Can::fwd(%d)\n", distance);
+	}
 
 	int16_t d = round(distance*COEF_DISTANCE);
 	send(1025, 2, ((char*)&d)[0], ((char*)&d)[1]);
@@ -104,7 +110,9 @@ bool Can::fwd(int distance)
 
 bool Can::fwd(int left, int right)
 {
-	printf("Can::fwd(%d, %d)\n", left, right);
+	if (verbose > 0) {
+		printf("Can::fwd(%d, %d)\n", left, right);
+	}
 
 	send(1032, 2, left, right);
 
@@ -113,7 +121,9 @@ bool Can::fwd(int left, int right)
 
 bool Can::speed(int left, int right)
 {
-	printf("Can::speed(%d, %d)\n", left, right);
+	if (verbose > 0) {
+		printf("Can::speed(%d, %d)\n", left, right);
+	}
 
 	send(1029, 2, left, right);
 
@@ -122,7 +132,9 @@ bool Can::speed(int left, int right)
 
 bool Can::odoSet(int16_t x, int16_t y, int16_t t) // FIXME mettre des unités mm et ° ?
 {
-	printf("Can::odoReset()\n");
+	if (verbose > 0) {
+		printf("Can::odoReset()\n");
+	}
 
 	send(517, 6, ((char*)&x)[0], ((char*)&x)[1],
 		((char*)&y)[0], ((char*)&y)[1],
@@ -133,7 +145,9 @@ bool Can::odoSet(int16_t x, int16_t y, int16_t t) // FIXME mettre des unités mm
 
 bool Can::sonarThres(int id, int16_t threshold)
 {
-	printf("Can::sonarThres(%d, %d)\n", id, threshold);
+	if (verbose > 0) {
+		printf("Can::sonarThres(%d, %d)\n", id, threshold);
+	}
 
 	int canid = 0;
 	if (id == 0) {
@@ -150,16 +164,20 @@ bool Can::sonarThres(int id, int16_t threshold)
 
 void Can::recv(struct libcan::can_t packet)
 {
-	printf("Can::recv: "); fflush(stdout);
-	libcan::can_pwrite(1, libcan::dec, &packet);
+	/*if (verbose > 1) {
+		printf("Can::recv: "); fflush(stdout);
+		libcan::can_pwrite(1, libcan::dec, &packet);
+	}*/
 
 	Queue::push(new TaskCanRecv(packet));
 }
 
 bool Can::send_now(struct can_t * packet)
 {
-	printf("Can::send: "); fflush(stdout);
-	libcan::can_pwrite(1, dec, packet);
+	if (verbose > 1) {
+		printf("Can::send: "); fflush(stdout);
+		libcan::can_pwrite(1, dec, packet);
+	}
 
 	can_pwrite(canbus, bin, packet);
 

@@ -14,14 +14,12 @@
 
 class Petit: public Mission
 {
-	void run() {
-		printf("Petit::run\n");
-		name = "Petit";
+	void start() {
 		state = RECALAGE;
 		load("recalage");
 	}
 
-	void mission()
+	bool missionDone(Mission * mission)
 	{
 		switch (state) {
 			case RECALAGE:
@@ -35,31 +33,33 @@ class Petit: public Mission
 				end();
 				break;
 		}
+
+		return true;
 	}
 
-	bool microswitch(int id, bool status) {
+	bool microswitchEvent(int id, bool status) {
 		switch (state) {
 			case ATTENTE_DEPART:
 				if (id == 0) { // Laisse de démarrage.
 					state = DEPART;
-					usleep(100000);
+					msleep(100);
 					can->fwd(395);
 				}
 				break;
 			case ATTENTE_BOUTEILLE_1: // TODO déclencher aussi par timer
 				if (id == 1) {
-					usleep(300000); // on a touché, on la pousse
+					msleep(300); // on a touché, on la pousse
 					can->stop();
-					usleep(100000);
+					msleep(100);
 					can->fwd(-200); // On s'éloigne.
-					state = 9999; /// Mais il veut pas s'arrêter !!!
+					state = 8; /// Mais il veut pas s'arrêter !!!
 				}
 				break;
 			case 52:
 				if (id == 1) {
-					usleep(300000);
+					msleep(300);
 					can->stop();
-					usleep(100000);
+					msleep(100);
 					can->fwd(-200);
 					state = 53;
 				}
@@ -69,7 +69,7 @@ class Petit: public Mission
 		return true;
 	}
 
-	bool asserv(int erreur) {
+	bool asservDone(int erreur) {
 
 		switch (state) {
 			case DEPART:
@@ -103,6 +103,7 @@ class Petit: public Mission
 			case 7:
 				state = ATTENTE_BOUTEILLE_1;
 				can->fwd(30, 30); // Avance lentement pour la toucher sans perdre en précision.
+				break;
 			case 8:
 				state = 9;
 				can->rotate(-90);
@@ -153,14 +154,6 @@ class Petit: public Mission
 				break;
 		}
 
-		return true;
-	}
-
-	bool sonar(int id, bool edge, int value) {
-		return true;
-	}
-
-	bool odometry(int x, int y, int theta) {
 		return true;
 	}
 };

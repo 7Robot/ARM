@@ -5,14 +5,12 @@
 
 class Str: public Mission
 {
-	void run() {
-		printf("Str::run\n");
-		name = "Str";
+	void start() {
 		state = 1;
 		load("fwd");
 	}
 
-	void mission() {
+	bool missionDone(Mission * mission) {
 		switch (state) {
 			case 1:
 				can->fwd(200);
@@ -32,7 +30,7 @@ class Str: public Mission
 		}
 	}
 
-	bool asserv(int erreur) {
+	bool asservDone(int erreur) {
 		switch (state) {
 			case 2:
 				state = 3;

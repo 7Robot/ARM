@@ -5,14 +5,12 @@
 
 class Fwd: public Mission
 {
-	void run() {
-		printf("Fwd::run\n");
-		name = "Fwd";
+	void start() {
 		state = 1;
 		can->fwd(150);
 	}
 
-	bool asserv(int erreur) {
+	bool asservDone(int erreur) {
 		switch (state) {
 			case 1:
 				end();

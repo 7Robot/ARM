@@ -6,7 +6,7 @@
 
 #include "functions.h"
 #include "MissionHandler.h"
-#include "Callback.h"
+#include "Spread.h"
 #include "Can.h"
 
 #include "Queue.h"
@@ -155,7 +155,7 @@ int main(int argc, char ** argv)
 
 	/////////////////////////////////////////////////////////////////////
 
-	Queue::push(new TaskLoad(mission));
+	Queue::push(new TaskLoad(mission, NULL));
 
 	Queue::start();
 	Queue::wait();

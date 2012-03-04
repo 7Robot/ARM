@@ -1,38 +1,35 @@
 #include <stdio.h>
-#include <unistd.h>
 
 #include "Mission.h"
 
-#define PROFONDEUR_RECALAGE        87 // mm
-#define DISTANCE_RECALAGE_DEPART   (250 - PROFONDEUR_RECALAGE) // (=163) mm
+#define BACK 163
+#define LEFT 163
 
 class Recalage: public Mission
 {
-	void run() {
-		printf("Recalage::run\n");
-		name = "Recalage";
+	void start() {
 		state = 1;
 		can->rotate(90); // On se met dos au mur gauche.
 	}
 
-	bool microswitch(int id, bool status) {
+	bool microswitchEvent(int id, bool status) {
 		switch (state) {
 			case 2: // On a touché le mur gauche, on repart en avant.
 				if (id == 0 && status) {
-					usleep(700000);
+					msleep(700);
 					can->stop();
 					state = 3;
-					usleep(300000);
-					can->fwd(DISTANCE_RECALAGE_DEPART);
+					msleep(300);
+					can->fwd(LEFT);
 				}
 				break;
 			case 5: // On a touché le mur de derrière, on se place enfin au centre.
 				if (id == 0 && status) {
-					usleep(700000);
+					msleep(700);
 					can->stop();
 					state = 6;
-					usleep(300000);
-					can->fwd(DISTANCE_RECALAGE_DEPART);
+					msleep(300);
+					can->fwd(BACK);
 				}
 				break;
 		}
@@ -40,7 +37,7 @@ class Recalage: public Mission
 		return true;
 	}
 
-	bool asserv(int erreur) {
+	bool asservDone(int erreur) {
 		switch (state) {
 			case 1: // Marche arrière.
 				state = 2;
