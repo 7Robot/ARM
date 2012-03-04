@@ -5,51 +5,58 @@
 #include <math.h>
 
 #include "Can.h"
+#include "Queue.h"
+#include "TaskCanSend.h"
+#include "TaskCanRecv.h"
+
+#define COEF_ROTATION 23.4
+#define COEF_DISTANCE 13.4
 
 using namespace libcan;
 
-Can::Can(int canbus, void (*callback)(struct can_t))
+Can::Can(int canbus)
 {
-	printf("Can::can(%d, %p)\n", canbus, callback);
+	printf("Can::can(%d)\n", canbus);
 
 	this->canbus = canbus;
 
     can_ctx * ctx;
     if (can_init(&ctx) < 0) {
         perror("can_init");
-        //return true;
     }
 
-    if (can_register_callback(ctx, 0, 0, callback) < 0) {
+    if (can_register_callback(ctx, 0, 0, Can::recv) < 0) {
         perror("can_register_callback");
-        //return true;
     }
     if (can_listen_on(ctx, canbus, libcan::bin) < 0) {
         perror("can_listen_on");
-        //return true;
     }
-
-	//return false;
 }
 
 bool Can::send(int id, int length, ...)
 {
-	//printf("Can::send(%d, %d, ...)\n", id, length);
+	int i;
 	va_list ap;
+	can_t packet;
+
+	packet.id = id;
+	packet.length = length;
 
     va_start(ap, length);
-	can_vwrite(canbus, bin, id, length, ap);
+	for (i = 0 ; i < length ; i++) {
+		packet.b[i] = (uint8_t)va_arg(ap, int);
+	}
     va_end(ap);
+
+	send(&packet);
 
 	return false;
 }
 
 bool Can::send(struct libcan::can_t * packet)
 {
-	//printf("Can::send(packet)\n");
+	Queue::push(new TaskCanSend(this, *packet));
 	
-	can_pwrite(canbus, bin, packet);
-
 	return false;
 }
 
@@ -66,7 +73,7 @@ bool Can::rotate(int angle)
 {
 	printf("Can::rotate(%d)\n", angle);
 	
-	int16_t a = round(angle*23.4);
+	int16_t a = round(angle*COEF_ROTATION);
 	send(1026, 2, ((char*)&a)[0], ((char*)&a)[1]);
 			
 	/*int tics = abs(angle) * 4212 / 180;
@@ -84,7 +91,7 @@ bool Can::fwd(int distance)
 {
 	printf("Can::fwd(%d)\n", distance);
 
-	int16_t d = round(distance*13.4);
+	int16_t d = round(distance*COEF_DISTANCE);
 	send(1025, 2, ((char*)&d)[0], ((char*)&d)[1]);
 
 	/*int tics = distance * 13.4;
@@ -113,32 +120,48 @@ bool Can::speed(int left, int right)
 	return false;
 }
 
-bool Can::odoSet(int16_t x, int16_t y, int16_t t) // FIXME mettre des unités cm et ° ?
+bool Can::odoSet(int16_t x, int16_t y, int16_t t) // FIXME mettre des unités mm et ° ?
 {
 	printf("Can::odoReset()\n");
 
 	send(517, 6, ((char*)&x)[0], ((char*)&x)[1],
 		((char*)&y)[0], ((char*)&y)[1],
 		((char*)&t)[0], ((char*)&t)[1]);
-	//send(517, 0);
 
 	return false;
 }
 
-bool Can::sonarThres(int id, int threshold)
+bool Can::sonarThres(int id, int16_t threshold)
 {
 	printf("Can::sonarThres(%d, %d)\n", id, threshold);
 
-	int cid = 0;
-	int16_t t = threshold;
+	int canid = 0;
 	if (id == 0) {
-		cid = 328;
+		canid = 328;
 	} else if (id == 1) {
-		cid = 360;
+		canid = 360;
 	}
-	if (cid != 0) {
-		send(cid, 2, ((char*)&t)[0], ((char*)&t)[1]);
+	if (canid != 0) {
+		send(canid, 2, ((char*)&threshold)[0], ((char*)&threshold)[1]);
 	}
+
+	return false;
+}
+
+void Can::recv(struct libcan::can_t packet)
+{
+	printf("Can::recv: "); fflush(stdout);
+	libcan::can_pwrite(1, libcan::dec, &packet);
+
+	Queue::push(new TaskCanRecv(packet));
+}
+
+bool Can::send_now(struct can_t * packet)
+{
+	printf("Can::send: "); fflush(stdout);
+	libcan::can_pwrite(1, dec, packet);
+
+	can_pwrite(canbus, bin, packet);
 
 	return false;
 }

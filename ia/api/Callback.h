@@ -7,15 +7,14 @@
 class Callback
 {
 	public:
-		static void recv(struct libcan::can_t packet);
+		static void packet(struct libcan::can_t packet);
 	
 	private:
-		//static void mission();
-
-		static void microswitch(int id, bool status);
-		static void asserv(int error);
-		static void sonar(int id, bool edge, bool nearby, int distance);
-		static void odometry(int x, int y, int theta);
+		static void missionDone();
+		static void microswitchEvent(int id, bool status);
+		static void asservDone(int error);
+		static void sonarEvent(int id, bool edge, bool nearby, int distance);
+		static void odometryEvent(int x, int y, int theta);
 
 };
 

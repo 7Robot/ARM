@@ -9,7 +9,12 @@
 #include "Callback.h"
 #include "Can.h"
 
-#define DEFAULT_HOST "r2d2"
+#include "Queue.h"
+#include "Task.h"
+
+#include "TaskLoad.h"
+
+#define DEFAULT_HOST "localhost"
 #define DEFAULT_PORT "7771"
 #define DEFAULT_MISSION "petit"
 #define DEFAULT_MISSION_DIRECTORY "./"
@@ -144,16 +149,21 @@ int main(int argc, char ** argv)
 		fprintf(stderr, "error: getsockfd(%s, %s) failed\n", host, port);
 		return 1;
 	}
-	Can can(canbus, Callback::recv);
+	Can can(canbus);
 
 	MissionHandler::setup(mission_directory, &can);
 
 	/////////////////////////////////////////////////////////////////////
+
+	Queue::push(new TaskLoad(mission));
+
+	Queue::start();
+	Queue::wait();
 	
-	if (MissionHandler::handler(mission)) {
+	/*if (MissionHandler::handler(mission)) {
 		fprintf(stderr, "MissionHandler::handler failed\n");
 		return 1;
-	}
+	}*/
 
 	/////////////////////////////////////////////////////////////////////
 
