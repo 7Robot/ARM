@@ -23,17 +23,19 @@ class Template: public Mission
 		state = 1; /* modifie l'état de la mission */
 	}
 
-	bool missionDone(Mission * mission) { // Une mission est terminé. Comparez les pointeurs pour vérifier s'il s'agit de la votre.
+	bool missionDone(Mission * mission) { // Une mission est terminé.
 		printf("Template::missionDone: %p (%s)\n", mission, mission->getName());
 
 		return true; // Continuer la propagation de l'event aux autres mission
 	}
 
-	void missionLoaded(Mission * mission) { // Une mission a été chargé, vérifiez que mission != NULL !
+	bool missionLoaded(Mission * mission) { // Une mission a été chargé, vérifiez que mission != NULL !
 		printf("Template::missionLoaded: %p (%s)\n", mission, mission==NULL?"(null)":mission->getName());
 		if (mission != NULL) {
 			unload(mission); /* déchargement mission « init » */
 		}
+
+		return true; // Continuer la propagation de l'event aux autres mission.
 	}
 	
 	bool microswitchEvent(int id, bool pressed) { // Un microswitch a été enfoncé ou relaché
