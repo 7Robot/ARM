@@ -11,16 +11,17 @@ class MissionHandler;
 class Mission
 {
 	public:
-		void setup(Can * can, const char * name);
+		void setup(Can * can, const char * name, Mission * owner);
 
 		int getState() const;
 		const char * getName() const;
+		Mission * getOwner() const;
 
 
 		virtual void start();
 
-		virtual void missionLoaded(Mission * mission);
-		virtual bool missionDone(Mission * mission);
+		virtual bool missionLoaded(Mission * mission, bool ownMission);
+		virtual bool missionDone(Mission * mission, bool ownMission, bool completed);
 		virtual bool microswitchEvent(int id, bool status);
 		virtual bool asservDone(int error);
 		virtual bool sonarEvent(int id, bool edge, bool nearby, int distance);
@@ -33,7 +34,10 @@ class Mission
 		Can * can;
 		int state;
 
-		void load(const char * mission, bool beWarned = true);
+		virtual bool missionLoaded(Mission * mission);
+		virtual bool missionDone(Mission * mission);
+
+		void load(const char * mission);
 		void unload(Mission * mission);
 		void end();
 		void sleep(int secondes);
@@ -42,6 +46,7 @@ class Mission
 	private:
 		int m_id;
 		char * name;
+		Mission * owner;
 };
 
 #endif

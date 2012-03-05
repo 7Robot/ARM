@@ -8,11 +8,12 @@ class Mission;
 class TaskUnload: public Task
 {
 	public:
-		TaskUnload(Mission * mission);
+		TaskUnload(Mission * mission, Mission * applicant);
 		void exec();
 
 	private:
 		Mission * m_mission;
+		Mission * m_applicant;
 };
 
 #endif

@@ -1,7 +1,7 @@
 #include "Task.h"
 
 #include <stdio.h>
-#include <pthread.h>
+#include <thread>
 
 int Task::id = 0;
 
@@ -12,16 +12,8 @@ void Task::operator()()
 	if (this->m_blocking) {
 		this->exec();
 	} else {
-		pthread_t pth;
-		pthread_create(&pth, NULL, Task::thread, (void *) this);
+		std::thread thr(&Task::exec, this);
 	}
-}
-
-void * Task::thread(void * arg)
-{
-	Task * task = (Task *) arg;
-	task->exec();
-	return NULL;
 }
 
 void Task::setPriority(int priority)

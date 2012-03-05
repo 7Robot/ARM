@@ -10,10 +10,12 @@
 
 using namespace std;
 
-TaskUnload::TaskUnload(Mission * mission): m_mission(mission) {}
+TaskUnload::TaskUnload(Mission * mission, Mission * applicant):
+	m_mission(mission), m_applicant(applicant) {}
 
 void TaskUnload::exec()
 {
 	MissionHandler::unload(m_mission);
-	Spread::missionDone(m_mission);
+	Spread::missionDone(m_mission, m_applicant);
+	delete m_mission;
 }

@@ -7,11 +7,15 @@
 #include "Queue.h"
 #include "TaskCanRecv.h"
 #include "Mission.h"
+#include "libcan.h"
 
 int Spread::verbose = 1;
 
 void Spread::packet(struct libcan::can_t packet)
 {
+	printf("Can::recv: "); fflush(stdout);
+	can_pwrite(1, dec, &packet);
+
 	pthread_mutex_lock(&MissionHandler::mtx);
 
 	if (packet.id == 1028) { // Asserv
@@ -43,14 +47,30 @@ void Spread::packet(struct libcan::can_t packet)
 	pthread_mutex_unlock(&MissionHandler::mtx);
 }
 
-void Spread::missionDone(Mission * mission)
+void Spread::missionLoaded(Mission * mission, Mission * owner)
 {
-	printf("Spread::missionDone: %s\n", mission == NULL ? "(null)" : mission->getName());
+	printf("Spread::missionLoaded\n");
 
-	std::set<Mission*>::iterator it;
-	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		int state = ((*it)->getState)();
-		bool r = ((*it)->missionDone)(mission);
+		bool r = ((*it)->missionLoaded)(mission, *it == owner);
+		if (verbose > 0 || state != ((*it)->getState)()) {
+			printf("\t[%3d]->[%3d]\t%s\n", state, ((*it)->getState)(), ((*it)->getName)());
+		}
+		if (!r) {
+			printf("\tPropagation stopped\n");
+			break;
+		}
+	}
+}
+
+void Spread::missionDone(Mission * mission, Mission * applicant)
+{
+	printf("Spread::missionDone\n");
+
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+		int state = ((*it)->getState)();
+		bool r = ((*it)->missionDone)(mission, *it == mission->getOwner(), mission == applicant);
 		if (verbose > 0 || state != ((*it)->getState)()) {
 			printf("\t[%3d]->[%3d]\t%s\n", state, ((*it)->getState)(), ((*it)->getName)());
 		}
@@ -63,8 +83,7 @@ void Spread::missionDone(Mission * mission)
 
 void Spread::microswitchEvent(int id, bool status)
 {
-    std::set<Mission*>::iterator it;
-	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		int state = ((*it)->getState)();
 		bool r = ((*it)->microswitchEvent)(id, status);
 		if (verbose > 0 || state != ((*it)->getState)()) {
@@ -79,8 +98,7 @@ void Spread::microswitchEvent(int id, bool status)
 
 void Spread::asservDone(int error)
 {
-    std::set<Mission*>::iterator it;
-	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		int state = ((*it)->getState)();
 		bool r = ((*it)->asservDone)(error);
 		if (verbose > 0 || state != ((*it)->getState)()) {
@@ -95,8 +113,7 @@ void Spread::asservDone(int error)
 
 void Spread::sonarEvent(int id, bool edge, bool nearby, int distance)
 {
-    std::set<Mission*>::iterator it;
-	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		int state = ((*it)->getState)();
 		bool r = ((*it)->sonarEvent)(id, edge, nearby, distance);
 		if (verbose > 0 || state != ((*it)->getState)()) {
@@ -111,8 +128,7 @@ void Spread::sonarEvent(int id, bool edge, bool nearby, int distance)
 
 void Spread::odoEvent(int x, int y, int theta)
 {
-    std::set<Mission*>::iterator it;
-	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		int state = ((*it)->getState)();
 		bool r = ((*it)->odoEvent)(x, y, theta);
 		if (verbose > 1 || state != ((*it)->getState)()) {
@@ -127,17 +143,16 @@ void Spread::odoEvent(int x, int y, int theta)
 
 void Spread::canEvent(struct libcan::can_t * packet)
 {
-	printf("\tCall canEvent ...\n");
+	printf("\tUnknow packet\n");
 
-    std::set<Mission*>::iterator it;
-	for(it =  MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
+	for(auto it = MissionHandler::missions.begin(); it != MissionHandler::missions.end(); ++it) {
 		int state = ((*it)->getState)();
 		bool r = ((*it)->canEvent)(*packet);
-		if (verbose > 0 || state != ((*it)->getState)()) {
-			//printf("\t[%3d]->[%3d]\t%s\n", state, ((*it)->getState)(), ((*it)->getName)());
+		if (verbose > 1 || state != ((*it)->getState)()) {
+			printf("\t[%3d]->[%3d]\t%s\n", state, ((*it)->getState)(), ((*it)->getName)());
 		}
 		if (!r) {
-			//printf("\tPropagation stopped\n");
+			printf("\tPropagation stopped\n");
 			break;
 		}
 	}

@@ -9,7 +9,8 @@ class Spread
 {
 	public:
 		static void packet(struct libcan::can_t packet);
-		static void missionDone(Mission * mission);
+		static void missionLoaded(Mission * mission, Mission * owner);
+		static void missionDone(Mission * mission, Mission * applicant);
 	
 	private:
 		static void microswitchEvent(int id, bool status);

@@ -14,9 +14,9 @@ class Can
 		bool stop();
 		bool rotate(int angle); /* degré */
 		bool fwd(int distance); /* mm */
-		bool fwd(int left_speed, int right_speed); /* -80 à 80 */
-		bool speed(int left_speed, int right_speed); /* -80 à 80 */
+		bool fwd(int left_speed, int right_speed, bool ramp = true); /* -80 à 80 */
 		bool odoSet(int16_t x, int16_t y, int16_t t);
+		bool odoRequest();
 		bool sonarThres(int id, int16_t threshold);
 
 		// These functions speak directly with the bus.

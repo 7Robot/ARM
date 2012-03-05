@@ -7,7 +7,6 @@ class Task
 		Task();
 		void operator()();
 		virtual void exec() = 0;
-		static void * thread(void * arg);
 
 		void setPriority(int priority);
 		int getPriority() const;

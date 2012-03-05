@@ -155,6 +155,15 @@ int main(int argc, char ** argv)
 
 	/////////////////////////////////////////////////////////////////////
 
+	/*for (int i = 0 ; i < 5 ; i++) {
+		Task * t = new TaskLoad(mission, NULL);
+		printf("%p\n", t);
+		Queue::push(t);
+	}
+	for (int i = 0 ; i < 5 ; i++) {
+		printf("%p\n", Queue::tasks->top());
+		Queue::tasks->pop();
+	}*/
 	Queue::push(new TaskLoad(mission, NULL));
 
 	Queue::start();

@@ -18,7 +18,7 @@ void MissionHandler::setup(const char * basedir, Can * can)
 	MissionHandler::can = can;
 }
 
-Mission * MissionHandler::load(const char * name)
+Mission * MissionHandler::load(const char * name, Mission * owner)
 {
 	printf("MissionHandler::load(%s)\n", name);
 
@@ -56,7 +56,7 @@ Mission * MissionHandler::load(const char * name)
 	Mission * mission = ((Mission*(*)())create)();
 	strcpy(path, name);
 	path[0] = path[0] - ' ';
-	mission->setup(can, path);
+	mission->setup(can, path, owner);
 
 	pthread_mutex_lock(&MissionHandler::mtx);
 	missions.insert(mission);
@@ -69,18 +69,15 @@ Mission * MissionHandler::load(const char * name)
 	return mission;
 }
 
-bool MissionHandler::unload(Mission * mission) // TODO
+bool MissionHandler::unload(Mission * mission)
 {
 	printf("MissionHandler::unload(%s)\n", mission->getName());
 
 	pthread_mutex_lock(&MissionHandler::mtx);
-	// TODO Callback
 	mission->stop();
 	MissionHandler::missions.erase(mission);
 	printf("Running missions: %d [-1: %s]\n", missions.size(), mission->getName());
 	pthread_mutex_unlock(&MissionHandler::mtx);
 
-	delete mission;
-	
 	return false;
 }

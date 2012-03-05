@@ -1,4 +1,5 @@
 #include <queue>
+#include <algorithm>
 
 #include <pthread.h>
 #include "Task.h"
@@ -16,8 +17,8 @@ class Queue
 		static void push(Task * task);
 		static void pop();
 
-	private:
 		static priority_queue<Task*, vector<Task*>, TaskCmp> * tasks;
+	private:
 		static pthread_t pth;
 		static pthread_mutex_t mtx;
 		static pthread_cond_t cnd;

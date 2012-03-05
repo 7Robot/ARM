@@ -15,7 +15,7 @@ class MissionHandler
 {
 	public:
 		static void setup(const char * basedir, Can * can);
-		static Mission * load(const char * mission);
+		static Mission * load(const char * mission, Mission * owner);
 		static bool unload(Mission * mission);
 
 		static std::set<Mission*> missions;

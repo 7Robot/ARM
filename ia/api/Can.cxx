@@ -108,24 +108,17 @@ bool Can::fwd(int distance)
 	return false;
 }
 
-bool Can::fwd(int left, int right)
+bool Can::fwd(int left, int right, bool ramp)
 {
 	if (verbose > 0) {
-		printf("Can::fwd(%d, %d)\n", left, right);
+		printf("Can::fwd(%d, %d, %s)\n", left, right, ramp?"true":"false");
 	}
 
-	send(1032, 2, left, right);
-
-	return false;
-}
-
-bool Can::speed(int left, int right)
-{
-	if (verbose > 0) {
-		printf("Can::speed(%d, %d)\n", left, right);
+	if (ramp) {
+		send(1032, 2, left, right);
+	} else {
+		send(1029, 2, left, right);
 	}
-
-	send(1029, 2, left, right);
 
 	return false;
 }
@@ -141,6 +134,11 @@ bool Can::odoSet(int16_t x, int16_t y, int16_t t) // FIXME mettre des unités mm
 		((char*)&t)[0], ((char*)&t)[1]);
 
 	return false;
+}
+
+bool Can::odoRequest()
+{
+	send(513, 0);
 }
 
 bool Can::sonarThres(int id, int16_t threshold)
@@ -164,11 +162,6 @@ bool Can::sonarThres(int id, int16_t threshold)
 
 void Can::recv(struct libcan::can_t packet)
 {
-	/*if (verbose > 1) {
-		printf("Can::recv: "); fflush(stdout);
-		libcan::can_pwrite(1, libcan::dec, &packet);
-	}*/
-
 	Queue::push(new TaskCanRecv(packet));
 }
 

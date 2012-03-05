@@ -7,12 +7,12 @@
 class TaskLoad: public Task
 {
 	public:
-		TaskLoad(const char * mission, Mission * caller);
+		TaskLoad(const char * mission, Mission * owner);
 		void exec();
 
 	private:
 		char * m_mission;
-		Mission * m_caller;
+		Mission * m_owner;
 };
 
 #endif

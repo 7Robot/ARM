@@ -1,6 +1,7 @@
 #include "TaskLoad.h"
 
 #include "../MissionHandler.h"
+#include "../Spread.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -9,7 +10,7 @@
 
 using namespace std;
 
-TaskLoad::TaskLoad(const char * mission, Mission * caller): m_caller(caller)
+TaskLoad::TaskLoad(const char * mission, Mission * owner): m_owner(owner)
 {
 	if (mission != NULL) {
 		if ((m_mission = (char*)malloc(strlen(mission) + 1)) == NULL) {
@@ -22,8 +23,12 @@ TaskLoad::TaskLoad(const char * mission, Mission * caller): m_caller(caller)
 
 void TaskLoad::exec()
 {
-	Mission * mission = MissionHandler::load(m_mission);
-	if (m_caller != NULL) {
-		m_caller->missionLoaded(mission);
+	Mission * mission = MissionHandler::load(m_mission, m_owner);
+	if (mission == NULL) {
+		if (m_owner != NULL) {
+			m_owner->missionLoaded(mission, true);
+		}
+	} else {
+		Spread::missionLoaded(mission, m_owner);
 	}
 }
