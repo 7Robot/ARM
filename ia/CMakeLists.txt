@@ -5,8 +5,9 @@ project(EurobotIA CXX)
 file(GLOB SRC *.cxx)
 
 add_subdirectory("api")
-
 include_directories("api")
+
+add_subdirectory("gui")
 
 set_source_files_properties(${SRC} PROPERTIES COMPILE_FLAGS -Wno-write-strings)
 
