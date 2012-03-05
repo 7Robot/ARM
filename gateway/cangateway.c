@@ -111,7 +111,7 @@ int main(int argc, char * argv[])
 	printf("\tSerial device : %s\n", device);
 	printf("\tSocket  : %s:%s\n", host, port);
 
-	if ((device_fd = getttyfd(device, 115200)) < 0) {
+	if ((device_fd = getttyfd(device, 19200)) < 0) {
 		fprintf(stderr, "error: getttyfd(%s, 115200) failed\n", device);
 		exit(1);
 	}
