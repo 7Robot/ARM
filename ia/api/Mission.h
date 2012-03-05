@@ -11,26 +11,42 @@ class MissionHandler;
 class Mission
 {
 	public:
-		void setup(MissionHandler * mh, Can * can);
-		void init();
-		virtual bool microswitch(int id, bool status) {}
-		virtual bool asserv(int error) {}
-		virtual bool sonar(int id, bool edge, bool nearby, int distance) {}
-		virtual bool odometry(int x, int y, int theta) {}
+		void setup(Can * can, const char * name, Mission * owner);
+
+		int getState() const;
+		const char * getName() const;
+		Mission * getOwner() const;
+
+
+		virtual void start();
+
+		virtual bool missionLoaded(Mission * mission, bool ownMission);
+		virtual bool missionDone(Mission * mission, bool ownMission, bool completed);
+		virtual bool microswitchEvent(int id, bool status);
+		virtual bool asservDone(int error);
+		virtual bool sonarEvent(int id, bool edge, bool nearby, int distance);
+		virtual bool odoEvent(int x, int y, int theta);
+		virtual bool canEvent(struct libcan::can_t packet);
+
+		virtual void stop();
 
 	protected:
 		Can * can;
 		int state;
-		void wait();
-		void signal();
-		void load(char * mission);
+
+		virtual bool missionLoaded(Mission * mission);
+		virtual bool missionDone(Mission * mission);
+
+		void load(const char * mission);
+		void unload(Mission * mission);
+		void end();
+		void sleep(int secondes);
+		void msleep(int microsecondes);
 
 	private:
-		virtual void run() = 0;
-		MissionHandler * mh;
-		pthread_cond_t cnd;
-		pthread_mutex_t mtx;
-		char * next;
+		int m_id;
+		char * name;
+		Mission * owner;
 };
 
 #endif

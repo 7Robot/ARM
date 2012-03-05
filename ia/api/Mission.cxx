@@ -1,46 +1,77 @@
 #include "Mission.h"
+#include "Queue.h"
+#include "TaskLoad.h"
+#include "TaskUnload.h"
+#include "TaskSleep.h"
 
-void Mission::setup(MissionHandler * mh, Can * can)
-{
-		this->mh = mh;
-		this->can = can;
-		cnd = PTHREAD_COND_INITIALIZER;
-		mtx = PTHREAD_MUTEX_INITIALIZER;
-		next = NULL;
-}
+#include <string.h>
+#include <unistd.h>
 
-void Mission::init()
-{
-	run();
-	if (next == NULL) {
-		wait();
+void Mission::setup(Can * can, const char * name, Mission * owner) {
+	this->can = can;
+	if ((this->name = (char *)malloc(strlen(name)+1)) != NULL) {
+		strcpy(this->name, name);
 	}
-	while (next != NULL) {
-		mh->load(next);
-		next = NULL;
-		wait();
+	this->owner = owner;
+}
+
+int Mission::getState() const {
+	return state;
+}
+
+const char * Mission::getName() const {
+	return name;
+}
+
+Mission * Mission::getOwner() const {
+	return owner;
+}
+
+void Mission::start() {}
+bool Mission::missionLoaded(Mission * mission, bool ownMission) {
+	if (ownMission) {
+		return missionLoaded(mission);
+	} else {
+		return true;
 	}
 }
+bool Mission::missionLoaded(Mission * mission) { return true; }
+bool Mission::missionDone(Mission * mission, bool ownMission, bool completed) {
+	if (ownMission && completed) {
+		return missionDone(mission);
+	} else {
+		return true;
+	}
+}
+bool Mission::missionDone(Mission * mission) { return true; }
+bool Mission::microswitchEvent(int id, bool status) { return true; }
+bool Mission::asservDone(int error) { return true; }
+bool Mission::sonarEvent(int id, bool edge, bool nearby, int distance) { return true; }
+bool Mission::odoEvent(int x, int y, int theta) { return true; }
+bool Mission::canEvent(struct libcan::can_t packet) { return true; }
+void Mission::stop() {}
 
-void Mission::wait()
-{
-	printf("Mission::wait()\n");
 
-	pthread_mutex_lock(&mtx);
-	pthread_cond_wait(&cnd, &mtx);
+void Mission::end() {
+	Queue::push(new TaskUnload(this, this));
 }
 
-void Mission::signal()
-{
-	printf("Mission::signal()\n");
-
-	pthread_mutex_lock(&mtx);
-	pthread_cond_signal(&cnd);
-	pthread_mutex_unlock(&mtx);
+void Mission::load(const char * mission) {
+	printf("Mission::load(%s)\n", mission);
+	Queue::push(new TaskLoad(mission, this));
 }
 
-void Mission::load(char * mission)
+void Mission::unload(Mission * mission) {
+	printf("Mission::unload(%s)\n", mission->getName());
+	Queue::push(new TaskUnload(mission, this));
+}
+
+void Mission::msleep(int microsecondes)
 {
-	next = mission;
-	signal();
+	Queue::push(new TaskSleep(0, microsecondes * 1000));
+}
+
+void Mission::sleep(int secondes)
+{
+	Queue::push(new TaskSleep(secondes));
 }

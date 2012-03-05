@@ -6,10 +6,15 @@
 
 #include "functions.h"
 #include "MissionHandler.h"
-#include "Callback.h"
+#include "Spread.h"
 #include "Can.h"
 
-#define DEFAULT_HOST "r2d2"
+#include "Queue.h"
+#include "Task.h"
+
+#include "TaskLoad.h"
+
+#define DEFAULT_HOST "localhost"
 #define DEFAULT_PORT "7771"
 #define DEFAULT_MISSION "petit"
 #define DEFAULT_MISSION_DIRECTORY "./"
@@ -135,24 +140,39 @@ int main(int argc, char ** argv)
 	printf("\tStarting mission: %s\n", mission);
 	printf("\tMissions directory: %s\n\n", mission_directory);
 
-	Can can;
 
-	printf("Create mission handler …\n");
-	MissionHandler mh(mission_directory, &can);
+	//printf("Create mission handler …\n");
+	//MissionHandler mh(mission_directory, &can);
 	
 	printf("Open bus can …\n");
 	if ((canbus = getsockfd(host, port)) < 0) {
 		fprintf(stderr, "error: getsockfd(%s, %s) failed\n", host, port);
 		return 1;
 	}
-	can.setup(canbus, Callback::recv);
+	Can can(canbus);
+
+	MissionHandler::setup(mission_directory, &can);
 
 	/////////////////////////////////////////////////////////////////////
-	
-	if (mh.load(mission)) {
-		fprintf(stderr, "error: failed to load mission « %s »\n", mission);
-		return 1;
+
+	/*for (int i = 0 ; i < 5 ; i++) {
+		Task * t = new TaskLoad(mission, NULL);
+		printf("%p\n", t);
+		Queue::push(t);
 	}
+	for (int i = 0 ; i < 5 ; i++) {
+		printf("%p\n", Queue::tasks->top());
+		Queue::tasks->pop();
+	}*/
+	Queue::push(new TaskLoad(mission, NULL));
+
+	Queue::start();
+	Queue::wait();
+	
+	/*if (MissionHandler::handler(mission)) {
+		fprintf(stderr, "MissionHandler::handler failed\n");
+		return 1;
+	}*/
 
 	/////////////////////////////////////////////////////////////////////
 

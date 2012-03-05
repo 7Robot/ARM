@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'FenAff.h'
 **
-** Created: Fri Feb 24 17:40:17 2012
+** Created: Wed Feb 29 20:51:37 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_FenAff[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -32,12 +32,15 @@ static const uint qt_meta_data_FenAff[] = {
 
  // slots: signature, parameters, type, tag, flags
        8,    7,    7,    7, 0x08,
+      21,    7,    7,    7, 0x08,
+      35,    7,    7,    7, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_FenAff[] = {
-    "FenAff\0\0send_ordre()\0"
+    "FenAff\0\0send_ordre()\0send_violet()\0"
+    "send_rouge()\0"
 };
 
 const QMetaObject FenAff::staticMetaObject = {
@@ -70,9 +73,11 @@ int FenAff::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: send_ordre(); break;
+        case 1: send_violet(); break;
+        case 2: send_rouge(); break;
         default: ;
         }
-        _id -= 1;
+        _id -= 3;
     }
     return _id;
 }

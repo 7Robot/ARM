@@ -2,60 +2,85 @@
 
 #include "Mission.h"
 
+//TODO incrémentation auto ?
+// États définis :
+#define RECALAGE     	    -2
+#define ATTENTE_DEPART	    -1
+#define DEPART              0
+#define TOURNE_BOUTEILLE_1	1
+#define AXE_BOUTEILLE_1   	2
+#define ATTENTE_BOUTEILLE_1 71
+//TODO incrémentation auto ?
+
 class Petit: public Mission
 {
-	void run() {
-		printf("Petit::run\n");
-		state = -2;
-		load("init");
-		state = -1;
+	void start() {
+		state = RECALAGE;
+		load("recalage");
 	}
 
-	bool microswitch(int id, bool status) {
-		printf("Petit::microswitch: id = %d, status = %d\n", id, status);
+	bool missionDone(Mission * mission)
+	{
 		switch (state) {
-			case -1:
-				if (id == 0) {
-					state = 0;
-					usleep(100000);
-					can->fwd(298);
+			case RECALAGE:
+				state = ATTENTE_DEPART;
+				break;
+			case 16:
+				state = 17;
+				load("evitement");
+				break;
+			case 17:
+				end();
+				break;
+		}
+
+		return true;
+	}
+
+	bool microswitchEvent(int id, bool status) {
+		switch (state) {
+			case ATTENTE_DEPART:
+				if (id == 0) { // Laisse de démarrage.
+					state = DEPART;
+					msleep(100);
+					can->fwd(395);
 				}
 				break;
-			case 7:
+			case ATTENTE_BOUTEILLE_1: // TODO déclencher aussi par timer
 				if (id == 1) {
-					usleep(300000);
+					msleep(300); // on a touché, on la pousse
 					can->stop();
-					usleep(100000);
-					can->fwd(-200);
-					state = 8;
-					//signal();
+					msleep(100);
+					can->fwd(-200); // On s'éloigne.
+					state = 8; /// Mais il veut pas s'arrêter !!!
 				}
 				break;
 			case 52:
 				if (id == 1) {
-					usleep(300000);
+					msleep(300);
 					can->stop();
-					usleep(100000);
+					msleep(100);
 					can->fwd(-200);
 					state = 53;
 				}
 				break;
 		}
+
+		return true;
 	}
 
-	bool asserv(int erreur) {
-		printf("Petit::asserv: erreur = %d\n", erreur);
+	bool asservDone(int erreur) {
 
 		switch (state) {
-			case 0:
-				state = 1;
+			case DEPART:
+				state = 1; 
 				can->rotate(90);
 				break;
-			case 1:
+			case 1: // On avance en direction de la bouteille.
 				state = 2;
 				can->fwd(600);
 				break;
-			case 2:
+			case 2: // Pause lingot.
 				state = 3;
 				can->rotate(90);
 				break;
@@ -63,19 +88,21 @@ class Petit: public Mission
 				state = 4;
 				can->fwd(400);
 				break;
-			case 4:
+			case 4: // On revient du lingot.
 				state = 5;
 				can->fwd(-400);
 				break;
 			case 5:
 				state = 6;
-				can->rotate(-90);
+				can->rotate(-90); // Axe bouteille.
 				break;
 			case 6:
 				state = 7;
-				can->fwd(80,80);
-				usleep(2000000);
-				can->fwd(30,30);
+				can->fwd(1000); // La bouteille est pile à 1m, on y va vite.
+				break;
+			case 7:
+				state = ATTENTE_BOUTEILLE_1;
+				can->fwd(30, 30); // Avance lentement pour la toucher sans perdre en précision.
 				break;
 			case 8:
 				state = 9;
@@ -107,7 +134,7 @@ class Petit: public Mission
 				break;
 			case 11:
 				state = 12;
-				can->fwd(1500);
+				can->fwd(1450);
 				break;
 			case 12:
 				state = 13;
@@ -115,7 +142,7 @@ class Petit: public Mission
 				break;
 			case 13:
 				state = 14;
-				can->fwd(1700);
+				can->fwd(1800);
 				break;
 			case 14:
 				state = 15;
@@ -123,17 +150,11 @@ class Petit: public Mission
 				break;
 			case 15:
 				state = 16;
-				load("init");
-				signal();
+				load("recalage");
 				break;
 		}
-	}
 
-	bool sonar(int id, bool edge, int value) {
-		//printf("Demo::sonar: id = %d, edge = %d, value = %d\n", id, edge, value);
-	}
-
-	bool odometry(int x, int y, int theta) {
+		return true;
 	}
 };
 
