@@ -18,7 +18,6 @@ class Evitement: public Mission
 	}
 	
 	bool sonarEvent(int id, bool edge, bool nearby, int value) {
-		printf("Evitement::sonar: id = %d, edge = %d, nearby = %d, value = %d\n", id, edge, nearby, value);
 		switch (state) {
 			case 1:
 				if (id == 0 && nearby) {
@@ -47,7 +46,6 @@ class Evitement: public Mission
 	}
 
 	/*void odometryEvent(int x, int y, int theta) {
-		printf("Template::odo: x = %d, y = %d, theta = %d\n", x, y, theta);
 	}*/
 };
 
