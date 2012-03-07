@@ -16,20 +16,16 @@ class Recalage: public Mission
 		switch (state) {
 			case 2: // On a touché le mur gauche, on repart en avant.
 				if (id == 0 && status) {
-					msleep(700);
-					can->stop();
 					state = 3;
-					msleep(300);
-					can->fwd(LEFT);
+					can->stop()->setDelay(700);
+					can->fwd(LEFT)->setDelay(300);
 				}
 				break;
 			case 5: // On a touché le mur de derrière, on se place enfin au centre.
 				if (id == 0 && status) {
-					msleep(700);
-					can->stop();
 					state = 6;
-					msleep(300);
-					can->fwd(BACK);
+					can->stop()->setDelay(700);
+					can->fwd(BACK)->setDelay(300);
 				}
 				break;
 		}
@@ -52,7 +48,8 @@ class Recalage: public Mission
 				can->fwd(-20, -20);
 				break;
 			case 6:
-				can->odoSet(-750, -1250, 9000);
+				can->odoReset();
+				//can->odoSet(-750, -1250, 9000);
 				// TODO Coordonnées rouges : -750, 1250, 27000
 				end();
 				break;

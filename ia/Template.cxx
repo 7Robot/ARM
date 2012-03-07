@@ -11,10 +11,7 @@ class Template: public Mission
 {
 	void start() {
 		load("fwd"); /* chargement mission « init » */
-		usleep(50); /* attente 50 microsecondes */
-		msleep(50); /* attente 50 millisecondes */
-		//sleep(50); /* attente 50 secondes */
-		can->fwd(500); /* avance de 500 mm */
+		can->fwd(500)->setDelay(50); /* avance de 500 mm  dans 50 ms */
 		can->rotate(50); /* tourne de 50° */
 		can->fwd(10, 10); /* vitesse roue gauche / roue droite (de -80 à 80) */
 		can->stop(); /* arrête instanément le robot */

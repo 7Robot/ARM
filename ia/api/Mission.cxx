@@ -28,29 +28,32 @@ Mission * Mission::getOwner() const {
 }
 
 void Mission::start() {}
+
 bool Mission::missionLoaded(Mission * mission, bool ownMission) {
 	if (ownMission) {
 		return missionLoaded(mission);
 	} else {
+		printf(" (ign)");
 		return true;
 	}
 }
-bool Mission::missionLoaded(Mission * mission) { return true; }
+bool Mission::missionLoaded(Mission * mission) {
+	return true;
+}
+
 bool Mission::missionDone(Mission * mission, bool ownMission, bool completed) {
 	if (ownMission && completed) {
 		return missionDone(mission);
 	} else {
+		printf(" (ign)");
 		return true;
 	}
 }
-bool Mission::missionDone(Mission * mission) { return true; }
-bool Mission::microswitchEvent(int id, bool status) { return true; }
-bool Mission::asservDone(int error) { return true; }
-bool Mission::sonarEvent(int id, bool edge, bool nearby, int distance) { return true; }
-bool Mission::odoEvent(int x, int y, int theta) { return true; }
-bool Mission::canEvent(struct libcan::can_t packet) { return true; }
-void Mission::stop() {}
+bool Mission::missionDone(Mission * mission) {
+	return true;
+};
 
+void Mission::stop() {}
 
 void Mission::end() {
 	Queue::push(new TaskUnload(this, this));
@@ -66,12 +69,13 @@ void Mission::unload(Mission * mission) {
 	Queue::push(new TaskUnload(mission, this));
 }
 
-void Mission::msleep(int microsecondes)
+
+/*void Mission::msleep(int microsecondes)
 {
 	Queue::push(new TaskSleep(0, microsecondes * 1000));
-}
+}*/
 
-void Mission::sleep(int secondes)
+/*void Mission::sleep(int secondes)
 {
 	Queue::push(new TaskSleep(secondes));
-}
+}*/

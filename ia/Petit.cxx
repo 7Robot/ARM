@@ -16,11 +16,17 @@ class Petit: public Mission
 {
 	void start() {
 		state = RECALAGE;
+		can->odoReset();
 		load("recalage");
 	}
 
-	bool missionDone(Mission * mission)
+	bool missionDone(Mission * mission, bool ownMission, bool completed)
 	{
+		printf("plop\n");
+		if (!ownMission || !completed) {
+			return true;
+		}
+
 		switch (state) {
 			case RECALAGE:
 				state = ATTENTE_DEPART;
@@ -42,25 +48,20 @@ class Petit: public Mission
 			case ATTENTE_DEPART:
 				if (id == 0) { // Laisse de démarrage.
 					state = DEPART;
-					msleep(100);
-					can->fwd(395);
+					can->fwd(395)->setDelay(100);
 				}
 				break;
 			case ATTENTE_BOUTEILLE_1: // TODO déclencher aussi par timer
 				if (id == 1) {
-					msleep(300); // on a touché, on la pousse
-					can->stop();
-					msleep(100);
-					can->fwd(-200); // On s'éloigne.
+					can->stop()->setDelay(300);
+					can->fwd(-200)->setDelay(100); // On s'éloigne.
 					state = 8; /// Mais il veut pas s'arrêter !!!
 				}
 				break;
 			case 52:
 				if (id == 1) {
-					msleep(300);
-					can->stop();
-					msleep(100);
-					can->fwd(-200);
+					can->stop()->setDelay(300);
+					can->fwd(-200)->setDelay(100);
 					state = 53;
 				}
 				break;

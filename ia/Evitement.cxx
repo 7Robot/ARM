@@ -10,10 +10,8 @@ class Evitement: public Mission
 {
 	void start() {
 		can->sonarThres(0, SEUIL * 256);
-		msleep(50); /* attente 50 ms */
-		can->sonarThres(1, SEUIL * 256);
-		msleep(50); /* attente 50 ms */
-		can->fwd(50, 50); /* vitesse roue gauche / roue droite (de -80 à 80) */
+		can->sonarThres(1, SEUIL * 256)->setDelay(50);
+		can->fwd(50, 50)->setDelay(50); /* vitesse roue gauche / roue droite (de -80 à 80) */
 		state = 1;
 	}
 	

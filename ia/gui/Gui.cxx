@@ -62,23 +62,82 @@ void Gui::gui()
 		(spinangle->signal_activate()).connect(action);
 	}
 
+	Gtk::Button * odobroadcast = 0;
+	builder->get_widget("buttonbroadcast", odobroadcast);
+	if (odobroadcast) {
+		(odobroadcast->signal_clicked()).connect([this]() {
+			can->odoBroadcast();
+		});
+	}
+
+	Gtk::Button * odomute = 0;
+	builder->get_widget("buttonmute", odomute);
+	if (odomute) {
+		(odomute->signal_clicked()).connect([this]() {
+			can->odoMute();
+		});
+	}
+
+	// Les boutons de simulation d'event switch
+	Gtk::Button * msFrontUp = 0;
+	builder->get_widget("msFrontUp", msFrontUp);
+	if (msFrontUp) {
+		(msFrontUp->signal_clicked()).connect([this]() {
+			can->send(259, 0);
+		});
+	}
+	Gtk::Button * msFrontDown = 0;
+	builder->get_widget("msFrontDown", msFrontDown);
+	if (msFrontDown) {
+		(msFrontDown->signal_clicked()).connect([this]() {
+			can->send(258, 0);
+		});
+	}
+	Gtk::Button * msBackUp = 0;
+	builder->get_widget("msBackUp", msBackUp);
+	if (msBackUp) {
+		(msBackUp->signal_clicked()).connect([this]() {
+			can->send(257, 0);
+		});
+	}
+	Gtk::Button * msBackDown = 0;
+	builder->get_widget("msBackDown", msBackDown);
+	if (msBackDown) {
+		(msBackDown->signal_clicked()).connect([this]() {
+			can->send(256, 0);
+		});
+	}
+
+	// L'état des cases à cochés « état des switchs »
+	builder->get_widget("msFrontState", msFrontState);
+	builder->get_widget("msBackState", msBackState);
+
+	// Les coordonnées du robot
 	builder->get_widget("posx", posx);
 	builder->get_widget("posy", posy);
 	builder->get_widget("angle", angle);
 
-	Gtk::Button * posupdate = 0;
-	builder->get_widget("posupdate", posupdate);
-	if (posupdate) {
-		(posupdate->signal_clicked()).connect([this]() {
+	// Les 3 bouttons du bas
+	Gtk::Button * buttonOdoReset = 0;
+	builder->get_widget("buttonOdoReset", buttonOdoReset);
+	if (buttonOdoReset) {
+		(buttonOdoReset->signal_clicked()).connect([this]() {
+			can->odoReset();
 			can->odoRequest();
 		});
 	}
-
-	Gtk::Button * stop = 0;
-	builder->get_widget("stop", stop);
-	if (stop) {
-		(stop->signal_clicked()).connect([this]() {
-			can->send(1051, 0);
+	Gtk::Button * buttonPositionUpdate = 0;
+	builder->get_widget("buttonPositionUpdate", buttonPositionUpdate);
+	if (buttonPositionUpdate) {
+		(buttonPositionUpdate->signal_clicked()).connect([this]() {
+			can->odoRequest();
+		});
+	}
+	Gtk::Button * buttonStop = 0;
+	builder->get_widget("buttonStop", buttonStop);
+	if (buttonStop) {
+		(buttonStop->signal_clicked()).connect([this]() {
+			can->stop();
 		});
 	}
 
@@ -96,7 +155,7 @@ void Gui::gui()
 	delete win;
 }
 
-bool Gui::odoEvent(int x, int y, int theta)
+bool Gui::odoAnswer(int x, int y, int theta)
 {
 	static char buffer[32];
 	if (map) {
@@ -113,6 +172,18 @@ bool Gui::odoEvent(int x, int y, int theta)
 	if (angle) {
 		sprintf(buffer, "%.2f°", theta/100.0);
 		angle->set_text(buffer);
+	}
+
+	return true;
+}
+
+bool Gui::microswitchEvent(int id, bool status)
+{
+	printf("microswitchEvent %d %d\n", id, status);
+	if (id == 0) {
+		msBackState->set_active(status);
+	} else {
+		msFrontState->set_active(status);
 	}
 
 	return true;

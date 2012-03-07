@@ -13,11 +13,7 @@ class Spread
 		static void missionDone(Mission * mission, Mission * applicant);
 	
 	private:
-		static void microswitchEvent(int id, bool status);
-		static void asservDone(int error);
-		static void sonarEvent(int id, bool edge, bool nearby, int distance);
-		static void odoEvent(int x, int y, int theta);
-		static void canEvent(struct libcan::can_t * packet);
+		template <typename T> static void spread(T caller);
 
 		static int verbose;
 

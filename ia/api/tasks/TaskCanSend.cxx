@@ -4,7 +4,8 @@
 
 using namespace std;
 
-TaskCanSend::TaskCanSend(Can * can, can_t packet): m_can(can), m_packet(packet) {}
+TaskCanSend::TaskCanSend(Can * can, can_t packet):
+	m_can(can), m_packet(packet) {}
 
 void TaskCanSend::exec()
 {

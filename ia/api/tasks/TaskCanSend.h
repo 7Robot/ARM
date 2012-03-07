@@ -16,6 +16,7 @@ class TaskCanSend: public Task
 	private:
 		can_t m_packet;
 		Can * m_can;
+		int m_delai;
 };
 
 #endif
