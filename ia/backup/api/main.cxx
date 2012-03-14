@@ -14,7 +14,7 @@
 
 #include "TaskLoad.h"
 
-#define DEFAULT_HOST "localhost"
+#define DEFAULT_HOST "r2d2"
 #define DEFAULT_PORT "7771"
 #define DEFAULT_MISSION "petit"
 #define DEFAULT_MISSION_DIRECTORY "./"

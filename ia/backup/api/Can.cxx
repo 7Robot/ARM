@@ -82,9 +82,13 @@ Task * Can::rotate(int angle)
 	if (verbose > 0) {
 		printf("Can::rotate(%d)\n", angle);
 	}
-	
-	int16_t a = round(angle*COEF_ROTATION);
-	return send(1026, 2, ((char*)&a)[0], ((char*)&a)[1]);
+
+	if (angle > 360 || angle < -360) {
+		fprintf("ERROR: Can::rotate(%d)\n", angle);
+	} else {
+		int16_t a = round(angle*COEF_ROTATION);
+		return send(1026, 2, ((char*)&a)[0], ((char*)&a)[1]);
+	}
 }
 
 Task * Can::fwd(int distance)

@@ -39,7 +39,7 @@ static uint16_t theta_s;
 static long int time_e;
 static int16_t x_e;
 static int16_t y_e;
-static uint16_t theta_e;
+static uint16_t theta_c;
 
 long int getTime()
 {
@@ -74,15 +74,19 @@ static void updatePos()
 {
 	double progress;
 	switch (asservStatus) {
-		case DISTANCE:
 		case ROTATION:
+		case DISTANCE:
 			printf("Calcul dist/rot pos\n");
 			progress = getProgression();
 			if (progress < 1) {
 				x = x_s + (x_e - x_s)*progress;
 				y = y_s + (y_e - y_s)*progress;
-				theta = ((int)theta_s + (int)(theta_e - theta_s)*progress + (int)36000);
-				theta %= 36000;
+				if (theta_e - theta_s > 180) {
+					theta_s += 36000;
+				} else if (theta_s - theta_e > 180) {
+					theta_e += 36000;
+				}
+				theta = (((int)theta_s + (int)(theta_c)*progress) + 18000)%36000;
 			} else {
 				x = x_e;
 				y = y_e;
