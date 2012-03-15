@@ -5,30 +5,17 @@
 
 using namespace std;
 
-pthread_t Queue::pth;
-pthread_mutex_t Queue::mtx = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t Queue::cnd = PTHREAD_COND_INITIALIZER;
-priority_queue<Task*, vector<Task*>, TaskCmp> * Queue::tasks = new priority_queue<Task*, vector<Task*>, TaskCmp>();
+Queue::Queue(): thr(&Queue::process, this) {}
 
-void Queue::start()
+void Queue::process()
 {
-	pthread_create(&pth, NULL, Queue::process, NULL);
-}
-
-// Deprecated
-void Queue::wait()
-{
-	printf("Warning: Queue::wait() is now obselet.\n");
-	pthread_join(pth, NULL);
-}
-
-void * Queue::process(void *)
-{
+	mtx = PTHREAD_MUTEX_INITIALIZER;
+	cnd = PTHREAD_COND_INITIALIZER;
 	while (1) {
 		pthread_mutex_lock(&mtx);
-		while (!tasks->empty()) {
-			Task * t = tasks->top();
-			tasks->pop();
+		while (!tasks.empty()) {
+			Task * t = tasks.top();
+			tasks.pop();
 			pthread_mutex_unlock(&mtx);
 			(*t)();
 			pthread_mutex_lock(&mtx);
@@ -40,8 +27,8 @@ void * Queue::process(void *)
 
 void Queue::push(Task * task)
 {
-	pthread_mutex_lock(&Queue::mtx);
-	tasks->push(task);
+	pthread_mutex_lock(&mtx);
+	tasks.push(task);
 	pthread_cond_signal(&cnd);
-	pthread_mutex_unlock(&Queue::mtx);
+	pthread_mutex_unlock(&mtx);
 }

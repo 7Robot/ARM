@@ -1,5 +1,4 @@
 #include "Can.h"
-#include "Queue.h"
 
 #include <unistd.h> // fsync
 #include <string.h> // memcpy
@@ -8,24 +7,13 @@
 #include <fcntl.h> // fcntl
 
 // Constructeur, enregistre le fd du bus can
-Can::Can(int canbus): m_canbus(canbus) {}
-
-void Can::lisen()
-{
-	// Socket en mode *bloquante*
-	int flags;
-	if ((flags = fcntl(m_canbus, F_GETFL)) < 0)
-		perror("fcntl(F_GETFL)");
-	if (fcntl(m_canbus, F_SETFL, flags & ~O_NONBLOCK) < 0)
-		perror("fcntl(F_SETFL)");
-
-	thr = new std::thread(&Can::recv, this);
-	//thr.detach();
-}
+Can::Can(int canbus, Queue * queue):
+	m_canbus(canbus), m_bindid(0), m_queue(queue), m_thr(&Can::recv, this) {}
 
 void Can::wait()
 {
-	thr->join();
+	printf("Waiting for can.\n");
+	m_thr.join();
 }
 
 // Construit un packet et l'ajoute à la file d'envois
@@ -47,15 +35,19 @@ Task * Can::push(int id, int length, ...)
 	return push(packet);
 }
 
-// Ajoute un packet à la file de tâche
+// Ajoute un packet à la file de tâche, ou envoit immédiat si pas de file
 Task * Can::push(can_packet packet)
 {
-	Task * t = new Task([this, packet]() {
-		this->send(packet);
-	});
-	Queue::push(t);
-
-	return t;
+	if (m_queue == NULL) {
+		send(packet);
+		return NULL;
+	} else {
+		Task * t = new Task([this, packet]() {
+			this->send(packet);
+		});
+		m_queue->push(t);
+		return t;
+	}
 }
 
 // Non réentrante !
@@ -74,6 +66,17 @@ void Can::send(can_packet packet)
 
 void Can::recv()
 {
+	// Socket en mode *bloquante*
+	int flags;
+	if ((flags = fcntl(m_canbus, F_GETFL)) < 0) {
+		perror("fcntl(F_GETFL)");
+		return;
+	}
+	if (fcntl(m_canbus, F_SETFL, flags & ~O_NONBLOCK) < 0) {
+		perror("fcntl(F_SETFL)");
+		return;
+	}
+
 	/* state = 1 : waiting FD
 	 * state = 2 : waiting length + ID high
 	 * state = 3 : waiting ID low
@@ -105,7 +108,14 @@ void Can::recv()
             state = -packet.length;
         } else if (state == 0) { /* waiting BF */
             if (c == 0xBF) {
-                dispatch(packet);
+				if (m_queue == NULL) {
+					dispatch(packet);
+				} else {
+					Task * t = new Task([this, packet]() {
+						dispatch(packet);
+					});
+					m_queue->push(t);
+				}
                 state = 1; /* waiting FD */
             } else {
                 state = 1; /* waiting FD */
@@ -126,14 +136,21 @@ void Can::dispatch(can_packet packet)
 	}
 	printf("\n");
 
-	std::for_each(cbs.begin(), cbs.end(), [packet](std::tuple<int, int, std::function<void (can_packet)>> &cb) {
-		if ((packet.id & std::get<0>(cb)) == std::get<1>(cb)) {
-			(std::get<2>(cb))(packet);
+	std::for_each(cbs.begin(), cbs.end(), [packet](std::pair<const int, can_callback> &cb) {
+		if ((packet.id & std::get<0>(cb.second)) == std::get<1>(cb.second)) {
+			(std::get<2>(cb.second))(packet);
 		}
 	});
 }
 
-void Can::bind(std::tuple<int, int, std::function<void (can_packet)>> callback)
+int Can::bind(can_callback callback)
 {
-	cbs.push_back(callback);
+	cbs.insert(std::pair<int, can_callback>(++m_bindid, callback));
+
+	return m_bindid;
+}
+
+void Can::unbind(int bindid)
+{
+	cbs.erase(bindid);
 }

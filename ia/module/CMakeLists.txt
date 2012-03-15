@@ -6,4 +6,6 @@ set_source_files_properties(${SRC} PROPERTIES
 
 include_directories("..")
 
-add_library(module STATIC Recalage.cxx)
+add_library(recalage SHARED Recalage)
+
+add_library(module STATIC Module ModuleManager)

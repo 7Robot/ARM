@@ -1,6 +1,7 @@
 #include "TaskCmp.h"
 
 #include <queue>
+#include <thread>
 
 #include <pthread.h>
 
@@ -11,17 +12,18 @@ class Task;
 class Queue
 {
 	public:
-		static void start();
-		static void wait(); // deprecated
-		static void push(Task * task);
-		static void pop();
+		Queue();
+		//~Queue();
+		void push(Task * task);
+		void pop();
 
 	private:
-		static priority_queue<Task*, vector<Task*>, TaskCmp> * tasks;
+		priority_queue<Task*, vector<Task*>, TaskCmp> tasks;
 
-		static pthread_t pth;
-		static pthread_mutex_t mtx;
-		static pthread_cond_t cnd;
+		//pthread_t pth;
+		std::thread thr;
+		pthread_mutex_t mtx;
+		pthread_cond_t cnd;
 
-		static void * process(void *);
+		void process();
 };
