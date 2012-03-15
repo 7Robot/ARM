@@ -17,3 +17,5 @@ add_subdirectory("hub")
 add_subdirectory("js")
 
 add_subdirectory("pictures/fb2rgb")
+
+add_subdirectory("minigui")

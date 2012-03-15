@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/pics">
+        <file>plateau.png</file>
+    </qresource>
+</RCC>
