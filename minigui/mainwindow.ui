@@ -7,39 +7,94 @@
     <x>0</x>
     <y>0</y>
     <width>320</width>
-    <height>267</height>
+    <height>240</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
-     <number>0</number>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>320</width>
+      <height>240</height>
+     </rect>
     </property>
-    <property name="spacing">
-     <number>0</number>
+    <property name="text">
+     <string/>
     </property>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap resource="res.qrc">:/pics/plateau.png</pixmap>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+    <property name="pixmap">
+     <pixmap resource="res.qrc">:/pics/plateau.png</pixmap>
+    </property>
+   </widget>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>320</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>26</height>
+    </size>
+   </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Test</string>
+    </property>
+    <addaction name="actionTest1"/>
+    <addaction name="actionTest2"/>
+    <addaction name="actionTest_capteurs"/>
+   </widget>
+   <widget class="QMenu" name="menuHalt">
+    <property name="title">
+     <string>Power</string>
+    </property>
+    <addaction name="actionRestart_minigui"/>
+    <addaction name="actionHalt"/>
+    <addaction name="actionReboot"/>
+   </widget>
+   <addaction name="menuTest"/>
+   <addaction name="menuHalt"/>
+  </widget>
+  <action name="actionTest1">
+   <property name="text">
+    <string>Test moteurs</string>
+   </property>
+  </action>
+  <action name="actionTest2">
+   <property name="text">
+    <string>Test odométrie</string>
+   </property>
+  </action>
+  <action name="actionHalt">
+   <property name="text">
+    <string>Halt</string>
+   </property>
+  </action>
+  <action name="actionReboot">
+   <property name="text">
+    <string>Reboot</string>
+   </property>
+  </action>
+  <action name="actionTest_capteurs">
+   <property name="text">
+    <string>Test capteurs</string>
+   </property>
+  </action>
+  <action name="actionRestart_minigui">
+   <property name="text">
+    <string>Restart minigui</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
