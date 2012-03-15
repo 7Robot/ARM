@@ -15,6 +15,8 @@ typedef struct {
 	uint8_t b[8];
 } can_packet;
 
+typedef std::tuple<int, int, std::function<void (can_packet)>> can_callback;
+
 class Can
 {
 	public:
@@ -23,12 +25,12 @@ class Can
 		void wait();
 		Task * push(can_packet);
 		Task * push(int id, int length, ...);
-		void bind(std::tuple<int, int, std::function<void (can_packet)>> callback);
+		void bind(can_callback callback);
 
 	private:
 		std::thread * thr;
 		int m_canbus;
-		std::vector<std::tuple<int, int, std::function<void (can_packet)>>> cbs;
+		std::vector<can_callback> cbs;
 
 		void send(can_packet);
 		void recv();

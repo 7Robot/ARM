@@ -7,9 +7,7 @@
 
 Recalage::Recalage(Can * can)
 {
-	std::function<void (int)> cb = std::bind(&Recalage::asservDone, this, std::placeholders::_1);
-	//std::tuple<int, int, std::function<void (can_packet)>> pcb = done(cb);
-	//can->bind(pcb);
+	can->bind(recv::asserv::done([this](int error){this->asservDone(error);}));
 }
 
 void Recalage::asservDone(int error) {

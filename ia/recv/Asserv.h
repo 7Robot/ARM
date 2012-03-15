@@ -8,7 +8,7 @@
 
 namespace recv {
     namespace asserv {
-		std::tuple<int, int, std::function<void (can_packet)>> done(std::function<void (int)> callback);
+		can_callback done(std::function<void (int)> callback);
 	}
 }
 
