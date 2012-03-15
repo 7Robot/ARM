@@ -40,6 +40,12 @@
      <height>26</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>0</width>
@@ -50,27 +56,27 @@
     <property name="title">
      <string>Test</string>
     </property>
-    <addaction name="actionTest1"/>
-    <addaction name="actionTest2"/>
-    <addaction name="actionTest_capteurs"/>
+    <addaction name="actionTestOdometrie"/>
+    <addaction name="actionTestMoteurs"/>
+    <addaction name="actionTestCapteurs"/>
    </widget>
-   <widget class="QMenu" name="menuHalt">
+   <widget class="QMenu" name="menuPower">
     <property name="title">
      <string>Power</string>
     </property>
-    <addaction name="actionRestart_minigui"/>
+    <addaction name="actionRestart"/>
     <addaction name="actionHalt"/>
     <addaction name="actionReboot"/>
    </widget>
    <addaction name="menuTest"/>
-   <addaction name="menuHalt"/>
+   <addaction name="menuPower"/>
   </widget>
-  <action name="actionTest1">
+  <action name="actionTestMoteurs">
    <property name="text">
     <string>Test moteurs</string>
    </property>
   </action>
-  <action name="actionTest2">
+  <action name="actionTestOdometrie">
    <property name="text">
     <string>Test odométrie</string>
    </property>
@@ -85,12 +91,12 @@
     <string>Reboot</string>
    </property>
   </action>
-  <action name="actionTest_capteurs">
+  <action name="actionTestCapteurs">
    <property name="text">
     <string>Test capteurs</string>
    </property>
   </action>
-  <action name="actionRestart_minigui">
+  <action name="actionRestart">
    <property name="text">
     <string>Restart minigui</string>
    </property>
@@ -100,5 +106,110 @@
  <resources>
   <include location="res.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionHalt</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerHalt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionReboot</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerReboot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRestart</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerRestart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTestCapteurs</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>TestCapteurs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTestMoteurs</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>TestMoteurs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTestOdometrie</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>TestOdometrie()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>TestCapteurs()</slot>
+  <slot>TestMoteurs()</slot>
+  <slot>TestOdometrie()</slot>
+  <slot>PowerHalt()</slot>
+  <slot>PowerReboot()</slot>
+  <slot>PowerRestart()</slot>
+ </slots>
 </ui>

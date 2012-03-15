@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent, Qt::X11BypassWindowManagerHint),
+    QMainWindow(parent, Qt::FramelessWindowHint),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
