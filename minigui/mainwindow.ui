@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>320</width>
+    <height>240</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>320</width>
+      <height>240</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="res.qrc">:/pics/plateau.png</pixmap>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>320</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>26</height>
+    </size>
+   </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Test</string>
+    </property>
+    <addaction name="actionTestOdometrie"/>
+    <addaction name="actionTestMoteurs"/>
+    <addaction name="actionTestCapteurs"/>
+   </widget>
+   <widget class="QMenu" name="menuPower">
+    <property name="title">
+     <string>Power</string>
+    </property>
+    <addaction name="actionRestart"/>
+    <addaction name="actionHalt"/>
+    <addaction name="actionReboot"/>
+   </widget>
+   <addaction name="menuTest"/>
+   <addaction name="menuPower"/>
+  </widget>
+  <action name="actionTestMoteurs">
+   <property name="text">
+    <string>Test moteurs</string>
+   </property>
+  </action>
+  <action name="actionTestOdometrie">
+   <property name="text">
+    <string>Test odométrie</string>
+   </property>
+  </action>
+  <action name="actionHalt">
+   <property name="text">
+    <string>Halt</string>
+   </property>
+  </action>
+  <action name="actionReboot">
+   <property name="text">
+    <string>Reboot</string>
+   </property>
+  </action>
+  <action name="actionTestCapteurs">
+   <property name="text">
+    <string>Test capteurs</string>
+   </property>
+  </action>
+  <action name="actionRestart">
+   <property name="text">
+    <string>Restart minigui</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionHalt</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerHalt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionReboot</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerReboot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRestart</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerRestart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTestCapteurs</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>TestCapteurs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTestMoteurs</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>TestMoteurs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTestOdometrie</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>TestOdometrie()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>TestCapteurs()</slot>
+  <slot>TestMoteurs()</slot>
+  <slot>TestOdometrie()</slot>
+  <slot>PowerHalt()</slot>
+  <slot>PowerReboot()</slot>
+  <slot>PowerRestart()</slot>
+ </slots>
+</ui>
