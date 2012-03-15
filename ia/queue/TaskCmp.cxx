@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-bool TaskCmp::operator()(TaskBase const * t1, TaskBase const * t2)
+bool TaskCmp::operator()(Task const * t1, Task const * t2)
 {
 	if (t1->getPriority() < t2->getPriority()) {
 		return true;

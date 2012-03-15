@@ -1,5 +1,5 @@
 #include "Queue.h"
-#include "TaskBase.h"
+#include "Task.h"
 
 #include <stdio.h>
 
@@ -8,15 +8,17 @@ using namespace std;
 pthread_t Queue::pth;
 pthread_mutex_t Queue::mtx = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t Queue::cnd = PTHREAD_COND_INITIALIZER;
-priority_queue<TaskBase*, vector<TaskBase*>, TaskCmp> * Queue::tasks = new priority_queue<TaskBase*, vector<TaskBase*>, TaskCmp>();
+priority_queue<Task*, vector<Task*>, TaskCmp> * Queue::tasks = new priority_queue<Task*, vector<Task*>, TaskCmp>();
 
 void Queue::start()
 {
 	pthread_create(&pth, NULL, Queue::process, NULL);
 }
 
+// Deprecated
 void Queue::wait()
 {
+	printf("Warning: Queue::wait() is now obselet.\n");
 	pthread_join(pth, NULL);
 }
 
@@ -25,7 +27,7 @@ void * Queue::process(void *)
 	while (1) {
 		pthread_mutex_lock(&mtx);
 		while (!tasks->empty()) {
-			TaskBase * t = tasks->top();
+			Task * t = tasks->top();
 			tasks->pop();
 			pthread_mutex_unlock(&mtx);
 			(*t)();
@@ -36,7 +38,7 @@ void * Queue::process(void *)
 	}
 }
 
-void Queue::push(TaskBase * task)
+void Queue::push(Task * task)
 {
 	pthread_mutex_lock(&Queue::mtx);
 	tasks->push(task);

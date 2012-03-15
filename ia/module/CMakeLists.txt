@@ -4,4 +4,6 @@ file(GLOB SRC *.cxx)
 set_source_files_properties(${SRC} PROPERTIES
 	COMPILE_FLAGS "-Wno-write-strings -std=gnu++0x")
 
+include_directories("..")
+
 add_library(module STATIC Recalage.cxx)

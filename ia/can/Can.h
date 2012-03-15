@@ -1,7 +1,13 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
+#include "Task.h"
+
 #include <stdint.h>
+
+#include <thread>
+#include <tuple>
+#include <algorithm>
 
 typedef struct {
 	int id;
@@ -13,12 +19,20 @@ class Can
 {
 	public:
 		Can(int canbus);
-		void push(can_packet);
-		void push(int id, int length, ...);
+		void lisen();
+		void wait();
+		Task * push(can_packet);
+		Task * push(int id, int length, ...);
+		void bind(std::tuple<int, int, std::function<void (can_packet)>> callback);
 
 	private:
-		void send(can_packet);
+		std::thread * thr;
 		int m_canbus;
+		std::vector<std::tuple<int, int, std::function<void (can_packet)>>> cbs;
+
+		void send(can_packet);
+		void recv();
+		void dispatch(can_packet);
 };
 
 #endif

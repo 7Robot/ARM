@@ -7,6 +7,9 @@
 #include "functions.h"
 
 #include "Can.h"
+#include "Queue.h"
+#include "send/Asserv.h"
+#include "Recalage.h"
 
 #define DEFAULT_HOST "r2d2"
 #define DEFAULT_PORT "7771"
@@ -144,6 +147,8 @@ int main(int argc, char ** argv)
 	/////////////////////////////////////////////////////////////////////
 
 	Can can(canbus);
+	Queue::start();
+	can.lisen();
 
 	can_packet packet;
 	packet.id = 123;
@@ -154,6 +159,13 @@ int main(int argc, char ** argv)
 	packet.b[3] = 210;
 	packet.b[4] = 125;
 	can.push(packet);
+
+	can.push(asserv::rotate(18));
+
+	Recalage r(&can);
+
+	can.wait();
+	Queue::wait();
 
 	/////////////////////////////////////////////////////////////////////
 	

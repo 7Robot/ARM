@@ -1,20 +1,30 @@
 #ifndef _TASK_H_
 #define _TASK_H_
 
-#include "TaskBase.h"
+#include <algorithm>
 
-template <typename T>
-class Task: public TaskBase
+class Task
 {
 	public:
-		Task(T callback): m_callback(callback) {}
+		Task(std::function<void (void)> callback);
 
+		void operator()();
+
+		void setPriority(int priority);
+		int getPriority() const;
+		void setBlocking(bool blocking);
+		void setDelay(int delay);
+		int getId() const;
+	
 	private:
-		T m_callback;
+		bool m_blocking;
+		int m_priority;
+		int m_delay;
+		int m_id;
+		std::function<void (void)> m_callback;
+		static int id;
 
-		void exec() {
-			m_callback();
-		}
+		void exec();
 };
 
 #endif

@@ -9,10 +9,10 @@ add_subdirectory("can")
 include_directories("can")
 
 add_subdirectory("send")
-include_directories("send")
+#include_directories("send")
 
 add_subdirectory("recv")
-include_directories("recv")
+#include_directories("recv")
 
 add_subdirectory("module")
 include_directories("module")
@@ -23,4 +23,4 @@ set_source_files_properties(${SRC} PROPERTIES
 
 add_executable(main main)
 
-target_link_libraries(main functions pthread canpp queue)
+target_link_libraries(main functions pthread canpp queue send module recv)
