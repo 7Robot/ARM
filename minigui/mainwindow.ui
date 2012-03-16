@@ -60,16 +60,18 @@
     <addaction name="actionTestMoteurs"/>
     <addaction name="actionTestCapteurs"/>
    </widget>
-   <widget class="QMenu" name="menuPower">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Power</string>
+     <string>File</string>
     </property>
-    <addaction name="actionRestart"/>
     <addaction name="actionHalt"/>
     <addaction name="actionReboot"/>
+    <addaction name="separator"/>
+    <addaction name="actionRestart"/>
+    <addaction name="actionQuit"/>
    </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuTest"/>
-   <addaction name="menuPower"/>
   </widget>
   <action name="actionTestMoteurs">
    <property name="text">
@@ -83,12 +85,12 @@
   </action>
   <action name="actionHalt">
    <property name="text">
-    <string>Halt</string>
+    <string>Halt ARM</string>
    </property>
   </action>
   <action name="actionReboot">
    <property name="text">
-    <string>Reboot</string>
+    <string>Reboot ARM</string>
    </property>
   </action>
   <action name="actionTestCapteurs">
@@ -98,7 +100,12 @@
   </action>
   <action name="actionRestart">
    <property name="text">
-    <string>Restart minigui</string>
+    <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
   </action>
  </widget>
@@ -109,7 +116,7 @@
  <connections>
   <connection>
    <sender>actionHalt</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>PowerHalt()</slot>
    <hints>
@@ -125,7 +132,7 @@
   </connection>
   <connection>
    <sender>actionReboot</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>PowerReboot()</slot>
    <hints>
@@ -141,7 +148,7 @@
   </connection>
   <connection>
    <sender>actionRestart</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>PowerRestart()</slot>
    <hints>
@@ -157,7 +164,7 @@
   </connection>
   <connection>
    <sender>actionTestCapteurs</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>TestCapteurs()</slot>
    <hints>
@@ -173,7 +180,7 @@
   </connection>
   <connection>
    <sender>actionTestMoteurs</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>TestMoteurs()</slot>
    <hints>
@@ -189,9 +196,25 @@
   </connection>
   <connection>
    <sender>actionTestOdometrie</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>TestOdometrie()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>PowerQuit()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -211,5 +234,6 @@
   <slot>PowerHalt()</slot>
   <slot>PowerReboot()</slot>
   <slot>PowerRestart()</slot>
+  <slot>PowerQuit()</slot>
  </slots>
 </ui>

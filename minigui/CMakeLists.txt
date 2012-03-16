@@ -1,15 +1,16 @@
 # http://qt-project.org/quarterly/view/using_cmake_to_build_qt_projects
 
-FIND_PACKAGE(Qt4 REQUIRED)
+find_package(Qt4 REQUIRED)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+project(Mini2440 GUI)
 
-INCLUDE(${QT_USE_FILE})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include(${QT_USE_FILE})
 
-SET(minigui_SOURCES   mainwindow.cpp main.cpp)
-SET(minigui_HEADERS   mainwindow.h)
-SET(minigui_FORMS     mainwindow.ui)
-SET(minigui_RESOURCES res.qrc)
+set(minigui_SOURCES   mainwindow.cpp main.cpp)
+set(minigui_HEADERS   mainwindow.h)
+set(minigui_FORMS     mainwindow.ui)
+set(minigui_RESOURCES res.qrc)
 
 
 QT4_WRAP_UI(minigui_FORMS_HEADERS ${minigui_FORMS})
@@ -18,11 +19,13 @@ QT4_WRAP_CPP(minigui_HEADERS_MOC ${minigui_HEADERS})
 QT4_ADD_RESOURCES(minigui_RESOURCES_RCC ${minigui_RESOURCES})
 
 
-ADD_EXECUTABLE(minigui ${minigui_SOURCES} ${minigui_HEADERS_MOC} 
+add_executable(minigui ${minigui_SOURCES} ${minigui_HEADERS_MOC} 
 	${minigui_FORMS_HEADERS} 
 	${minigui_RESOURCES_RCC})
 
-TARGET_LINK_LIBRARIES(minigui ${QT_LIBRARIES})
+target_link_libraries(minigui ${QT_LIBRARIES})
 
 
-INSTALL(TARGETS minigui RUNTIME DESTINATION bin)
+install(TARGETS minigui RUNTIME DESTINATION bin)
+install(FILES init.sh DESTINATION /etc/rc.d/S99minigui
+	PERMISSIONS WORLD_READ WORLD_WRITE WORLD_EXECUTE)
