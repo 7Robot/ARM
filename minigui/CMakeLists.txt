@@ -2,8 +2,6 @@
 
 find_package(Qt4 REQUIRED)
 
-project(Mini2440 GUI)
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include(${QT_USE_FILE})
 
