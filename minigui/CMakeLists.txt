@@ -25,5 +25,5 @@ target_link_libraries(minigui ${QT_LIBRARIES})
 
 
 install(TARGETS minigui RUNTIME DESTINATION bin)
-install(FILES init.sh DESTINATION /etc/rc.d/S99minigui
+install(FILES S99minigui DESTINATION /etc/rc.d
 	PERMISSIONS WORLD_READ WORLD_WRITE WORLD_EXECUTE)
