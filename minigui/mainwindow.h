@@ -19,9 +19,10 @@ public slots:
     void TestMoteurs();
     void TestOdometrie();
     void TestCapteurs();
+    void PowerQuit();
+    void PowerReboot();
     void PowerRestart();
     void PowerHalt();
-    void PowerReboot();
 
 private:
     Ui::MainWindow *ui;
