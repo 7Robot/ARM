@@ -62,6 +62,13 @@ void Can::send(can_packet packet)
 		perror("write");
 	}
 	fsync(m_canbus);
+
+	printf("Packet sended:  ");
+	printf("\t%-6i\t", packet.id);
+	for (int i = 0 ; i < packet.length ; i++) {
+		printf("   %-3i", packet.b[i]);
+	}
+	printf("\n");
 }
 
 void Can::recv()
@@ -129,7 +136,7 @@ void Can::recv()
 
 void Can::dispatch(can_packet packet)
 {
-	printf("Packet !\n");
+	printf("Packet received:");
 	printf("\t%-6i\t", packet.id);
 	for (int i = 0 ; i < packet.length ; i++) {
 		printf("   %-3i", packet.b[i]);
