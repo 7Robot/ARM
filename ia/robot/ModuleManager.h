@@ -8,12 +8,13 @@
 class ModuleManager
 {
 	public:
-		ModuleManager(Can * can, const char * basedir);
-		Module * load(const char * mission);
+		ModuleManager(const char * basedir, Can * can, Queue * queue);
+		Module * load(const char * name);
 		void unload(Module * module);
 
 	private:
 		std::set<Module *> modules;
+		Queue * queue;
 		Can * can;
 		const char * basedir;
 };

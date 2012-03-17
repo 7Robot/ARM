@@ -4,8 +4,8 @@
 #include <dlfcn.h>
 #include <string.h>
 
-ModuleManager::ModuleManager(Can * can, const char * bd):
-	can(can), basedir(bd) {}
+ModuleManager::ModuleManager(const char * bd, Can * can, Queue * queue):
+	queue(queue), can(can), basedir(bd) {}
 
 Module * ModuleManager::load(const char * name)
 {
@@ -40,7 +40,7 @@ Module * ModuleManager::load(const char * name)
 		return NULL;
 	}
 
-	module->setup(can, name);
+	module->setup(queue, can, this, name);
 	module->init();
 	modules.insert(module);
 
@@ -52,6 +52,6 @@ Module * ModuleManager::load(const char * name)
 void ModuleManager::unload(Module * module)
 {
 	modules.erase(module);
-	printf("LOADED MODULES: %3d [— %s]\n", modules.size(), module->getName());
+	printf("LOADED MODULES: %3d [− %s]\n", modules.size(), module->getName());
 	delete module;
 }

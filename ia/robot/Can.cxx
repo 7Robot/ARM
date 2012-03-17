@@ -8,7 +8,7 @@
 
 // Constructeur, enregistre le fd du bus can
 Can::Can(int canbus, Queue * queue):
-	m_canbus(canbus), m_bindid(0), m_queue(queue), m_thr(&Can::recv, this) {}
+	m_canbus(canbus), m_queue(queue), m_thr(&Can::recv, this) {}
 
 void Can::wait()
 {
@@ -143,21 +143,19 @@ void Can::dispatch(can_packet packet)
 	}
 	printf("\n");
 
-	std::for_each(cbs.begin(), cbs.end(), [packet](std::pair<const int, can_callback> &cb) {
+	std::for_each(cbs.begin(), cbs.end(), [packet](std::pair<const void*, can_callback> cb) {
 		if ((packet.id & std::get<0>(cb.second)) == std::get<1>(cb.second)) {
 			(std::get<2>(cb.second))(packet);
 		}
 	});
 }
 
-int Can::bind(can_callback callback)
+void Can::bind(void* id, can_callback callback)
 {
-	cbs.insert(std::pair<int, can_callback>(++m_bindid, callback));
-
-	return m_bindid;
+	cbs.insert(std::pair<void*, can_callback>(id, callback));
 }
 
-void Can::unbind(int bindid)
+void Can::unbind(void* id)
 {
-	cbs.erase(bindid);
+	cbs.erase(id);
 }

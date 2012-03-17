@@ -1,8 +1,7 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
-#include "Task.h"
-#include "Queue.h"
+#include "queue/Queue.h"
 
 #include <stdint.h>
 
@@ -27,15 +26,14 @@ class Can
 		void wait();
 		Task * push(can_packet);
 		Task * push(int id, int length, ...);
-		int bind(can_callback callback);
-		void unbind(int bindid);
+		void bind(void*, can_callback callback);
+		void unbind(void* id);
 
 	private:
 		std::thread m_thr;
 		int m_canbus;
-		int m_bindid;
 		Queue * m_queue;
-		std::map<int, can_callback> cbs;
+		std::multimap<void*, can_callback> cbs;
 
 		void send(can_packet);
 		void recv();

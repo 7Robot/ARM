@@ -1,7 +1,7 @@
 #ifndef _SEND_H_
 #define _SEND_H_
 
-#include "Can.h"
+#include "../Can.h"
 
 namespace asserv {
 	can_packet stop();

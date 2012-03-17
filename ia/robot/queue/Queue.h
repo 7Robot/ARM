@@ -1,3 +1,7 @@
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
+
+#include "Task.h"
 #include "TaskCmp.h"
 
 #include <queue>
@@ -7,7 +11,7 @@
 
 using namespace std;
 
-class Task;
+//class Task;
 
 class Queue
 {
@@ -27,3 +31,5 @@ class Queue
 
 		void process();
 };
+
+#endif

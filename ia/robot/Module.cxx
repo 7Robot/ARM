@@ -1,8 +1,13 @@
 #include "Module.h"
 
-void Module::setup(Can * can, const char * name)
+#include "queue/Queue.h"
+#include "ModuleManager.h"
+
+void Module::setup(Queue * queue, Can * can, ModuleManager * mh, const char * name)
 {
+	m_queue = queue;
 	m_can = can;
+	m_mh = mh;
 	m_name = name;
 }
 
@@ -27,15 +32,17 @@ void Module::load(const char * name)
 
 void Module::abord()
 {
-	printf("Module::abord: Not implemented yet !\n");
+	//printf("Module::abord: Not implemented yet !\n");
+	Task * t = new Task([this, m_mh]() {
+			m_mh->unload(this);
+	});
+	m_queue->push(t);
 }
 	
 
 Module::~Module()
 {
-	for_each(binding.begin(), binding.end(), [this](int bindid) {
-		m_can->unbind(bindid);
-	});
+	m_can->unbind(this);
 }
 
 Task * Module::send(can_packet packet)
@@ -45,5 +52,5 @@ Task * Module::send(can_packet packet)
 
 void Module::bind(can_callback cb)
 {
-	binding.push_back(m_can->bind(cb));
+	m_can->bind(this, cb);
 }

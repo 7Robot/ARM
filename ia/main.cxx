@@ -6,8 +6,7 @@
 
 #include "functions.h"
 
-#include "Can.h"
-#include "ModuleManager.h"
+#include "Robot.h"
 
 #define DEFAULT_HOST "r2d2"
 #define DEFAULT_PORT "7771"
@@ -144,32 +143,9 @@ int main(int argc, char ** argv)
 	
 	/////////////////////////////////////////////////////////////////////
 
-	Queue queue;
-	Can can(canbus, &queue);
-	ModuleManager mm(&can, mission_directory);
-	mm.load("recalage");
-	can.wait();
-	//Queue::start();
-	//can.lisen();
-
-	//can_packet packet;
-	//packet.id = 123;
-	//packet.length = 5;
-	//packet.b[0] = 226;
-	//packet.b[1] = 54;
-	//packet.b[2] = 32;
-	//packet.b[3] = 210;
-	//packet.b[4] = 125;
-	//can.push(packet);
-
-	//can.push(asserv::rotate(18));
-
-	//Recalage r;
-	//r.setup(&can, "Recalage");
-	//r.init();
-
-	//can.wait();
-	//Queue::wait();
+	Robot robot(canbus, mission_directory);
+	robot.load("recalage");
+	pause();
 
 	/////////////////////////////////////////////////////////////////////
 	
