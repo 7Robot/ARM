@@ -22,4 +22,4 @@ sleep 1
 LD_LIBRARY_PATH=/usr/local/lib/
 canbridge &
 
-sudo cangateway -H localhost &
+sudo cangateway -H localhost -D /dev/ttyUSB* &
